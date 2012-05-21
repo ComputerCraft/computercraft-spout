@@ -1,0 +1,6 @@
+name: ComputerCraft
+main: net.robbytu.computercraft.CCMain
+version: 0.0.1
+depend: [Spout]
+author: Kwieb
+database: true
