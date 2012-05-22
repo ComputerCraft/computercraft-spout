@@ -26,33 +26,33 @@ public class FileManager {
 		}
 	}
 	
-	public static boolean isDir(String path, int CID) {
-	
+	public static String isDir(String path, int CID) {
+						
 		String[] split = path.split("/");
-		int depth = 0;
+		String newPath = computersDir + "/" + CID;
 		
-		for (String pathPart : split) {
-			if (pathPart.equals("..")) {
-				if (depth == 0) {
-					return false;
+		for (int i = 0; i < split.length; i++) {
+			String pathPart = split[i];
+			if (!pathPart.isEmpty()) {
+				if (pathPart.equals("..")) {
+					newPath = newPath.substring(0, newPath.lastIndexOf("/"));
 				}
 				else {
-					depth--;
+					newPath += "/" + pathPart;
 				}
 			}
-			else if (!pathPart.isEmpty()) {
-				depth++;
+		}
+		
+		newPath += "/";
+		
+		if (newPath.startsWith(computersDir.getAbsolutePath() + "/" + CID)) {
+			File file = new File(computersDir, CID + "/" + path); 
+			
+			if (file.isDirectory()) {
+				return newPath.replace(computersDir.getAbsolutePath() + "/" + CID, "");
 			}
 		}
-		
-		File file = new File(computersDir, CID + "/" + path); // Potentially dangerous
-		
-		// Checks to see if we are in the sandbox
-		if (file.getAbsolutePath().startsWith(computersDir.getAbsolutePath() + "/" + CID)) {
-			return file.isDirectory();
-		}
-		
-		return false;
+		return "";
 	}
 	
 	public static boolean mkDir(String path, String name, int CID) {
