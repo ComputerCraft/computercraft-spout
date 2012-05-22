@@ -5,8 +5,10 @@ import java.io.File;
 import net.robbytu.computercraft.database.ComputerData;
 
 public class FileManager {
+	private static File computersDir = new File(CCMain.instance.getDataFolder().getAbsolutePath() + "/computers/");
+	
 	public static void newComputerEvent(ComputerData data) {
-		File computerDir = new File(CCMain.instance.getDataFolder().getAbsolutePath() + "/computers/" + data.getId());
+		File computerDir = new File(computersDir, Integer.toString(data.getId()));
 		if(!computerDir.exists()) {
 			computerDir.mkdir();
 		}
@@ -15,22 +17,46 @@ public class FileManager {
 	}
 	
 	public static void deleteComputerEvent(ComputerData data) {
-		File computersDir = new File(CCMain.instance.getDataFolder().getAbsolutePath() + "/computers");
+		//File computersDir = new File(CCMain.instance.getDataFolder().getAbsolutePath() + "/computers");
 		if(!computersDir.exists()) computersDir.mkdir();
 		
-		File computerDir = new File(CCMain.instance.getDataFolder().getAbsolutePath() + "/computers/" + data.getId());
+		File computerDir = new File(computersDir, Integer.toString(data.getId()));
 		if(computerDir.exists()) {
 			removeDirectory(computerDir);
 		}
 	}
 	
 	public static boolean isDir(String path, int CID) {
-		File file = new File(CCMain.instance.getDataFolder().getAbsolutePath() + "/computers/" + CID + "/" + path); // Potentially dangerous
-		return file.isDirectory();
+	
+		String[] split = path.split("/");
+		int depth = 0;
+		
+		for (String pathPart : split) {
+			if (pathPart.equals("..")) {
+				if (depth == 0) {
+					return false;
+				}
+				else {
+					depth--;
+				}
+			}
+			else if (!pathPart.isEmpty()) {
+				depth++;
+			}
+		}
+		
+		File file = new File(computersDir, CID + "/" + path); // Potentially dangerous
+		
+		// Checks to see if we are in the sandbox
+		if (file.getAbsolutePath().startsWith(computersDir.getAbsolutePath() + "/" + CID)) {
+			return file.isDirectory();
+		}
+		
+		return false;
 	}
 	
 	public static boolean mkDir(String path, String name, int CID) {
-		File file = new File(CCMain.instance.getDataFolder().getAbsolutePath() + "/computers/" + CID + "/" + path + "/" + name); // Potentially dangerous
+		File file = new File(computersDir, CID + "/" + path + "/" + name); // Potentially dangerous
 
 		if(file.exists() && file.isDirectory()) return true;
 		else if(file.exists()) return false;
@@ -55,8 +81,8 @@ public class FileManager {
 			}
 		}
 		
-		File file = new File(CCMain.instance.getDataFolder().getAbsolutePath() + "/computers/" + CID + "/" + path); // Potentially dangerous
-		if(file.exists()) {
+		File file = new File(computersDir, CID + "/" + path); // Potentially dangerous
+		if(file.exists() && file.getAbsolutePath().startsWith(computersDir.getAbsolutePath() + CID)) {
 			files = file.list();
 			if(files != null) {
 				for(int i = 0; i < files.length; i++) {
@@ -88,7 +114,7 @@ public class FileManager {
 			return "RM_ROOT_ACCESS_DENIED";
 		}
 		else {
-			File file = new File(CCMain.instance.getDataFolder().getAbsolutePath() + "/computers/" + CID + "/" + path); // Potentially dangerous
+			File file = new File(computersDir, CID + "/" + path); // Potentially dangerous
 			if(!file.exists()) {
 				return "RM_DOES_NOT_EXIST";
 			}
