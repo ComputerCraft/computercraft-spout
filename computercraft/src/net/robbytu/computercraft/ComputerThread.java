@@ -204,6 +204,12 @@ public class ComputerThread {
 				return LuaValue.valueOf(FileManager.rm(val.toString(), CID));
 			}
 		});
+		
+		io.set("getDir", new OneArgFunction() {
+			public LuaValue call(LuaValue val) {
+				return LuaValue.valueOf(FileManager.getDir(val.toString(), CID));
+			}
+		});
 		lua.set("io", io);
 		
 		// Events API

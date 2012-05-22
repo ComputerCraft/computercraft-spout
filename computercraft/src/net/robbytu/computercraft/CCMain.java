@@ -35,24 +35,22 @@ public class CCMain extends JavaPlugin {
 			
 			return;
 		}
-		
+			
 		// Setup all the defaults - This MIGHT be better off in it's own class as we add more configs
 		getDataFolder().mkdir(); // This will not do anythig if it already exists
 		new File(getDataFolder().getAbsolutePath() + "/computers/").mkdir();
 		File romDir = new File(getDataFolder().getAbsolutePath() + "/rom/");
 		romDir.mkdir();
-		
 		File defaultRom = new File(romDir, "boot.lua");
 		if (!defaultRom.exists()) {
 			try {
 				defaultRom.createNewFile();
-				
 				OutputStream output = new FileOutputStream(defaultRom, false);
 		        InputStream input = CCMain.class.getResourceAsStream("/defaults/boot.lua");
-		        
 		        byte[] buf = new byte[8192];
 		        while (true) {
 		          int length = input.read(buf);
+		          getLogger().info("" + length);
 		          if (length < 0) {
 		            break;
 		          }
@@ -64,7 +62,6 @@ public class CCMain extends JavaPlugin {
 				e.printStackTrace();
 			}
 		}
-		
 		
 		// Fill in the static variables
 		instance = this;

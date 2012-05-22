@@ -26,8 +26,7 @@ public class FileManager {
 		}
 	}
 	
-	public static String isDir(String path, int CID) {
-						
+	public static String getDir(String path, int CID) {
 		String[] split = path.split("/");
 		String newPath = computersDir + "/" + CID;
 		
@@ -53,6 +52,10 @@ public class FileManager {
 			}
 		}
 		return "";
+	}
+	
+	public static boolean isDir(String path, int CID) {
+		return !getDir(path, CID).isEmpty();
 	}
 	
 	public static boolean mkDir(String path, String name, int CID) {

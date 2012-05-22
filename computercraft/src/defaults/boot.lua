@@ -6,7 +6,7 @@ _curdir = "/"
 
 -- Functions
 cd = function(dir)
-   	_newdir = io.isDir(_curdir .. dir)
+   	_newdir = io.getDir(_curdir .. dir)
 	if _newdir == "" then
    		print(color.byString("RED") .. "No such directory")
 	else
@@ -16,17 +16,15 @@ cd = function(dir)
 end
 
 lls = function()
-	if io.isDir(_curdir) == "" then
-		print(color.byString("RED") .. "Current working directory does not exist!")
-	else
+	if io.isDir(_curdir) then
 		io.printList(_curdir)
+	else
+		print(color.byString("RED") .. "Current working directory does not exist!")		
 	end
 end
 
 rm = function(filename)
-	if io.isDir(_curdir) == "" then
-		print(color.byString("RED") .. "Current working directory does not exist!")
-	else
+	if io.isDir(_curdir) then
 		result = io.remove(_curdir .. filename)
 		if result == "RM_FILE_OK" then
 			print(color.byString("GREEN") .. "File got deleted.")
@@ -37,6 +35,8 @@ rm = function(filename)
 		else
 			print(color.byString("RED") .. "Something strange is goin' on...")
 		end
+	else
+		print(color.byString("RED") .. "Current working directory does not exist!")
 	end
 end
 

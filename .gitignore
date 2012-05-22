@@ -66,3 +66,4 @@ nb-configuration.xml
 # Locked Files #
 ################
 *~
+/lib
