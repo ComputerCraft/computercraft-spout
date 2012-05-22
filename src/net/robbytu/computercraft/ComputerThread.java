@@ -1,5 +1,8 @@
 package net.robbytu.computercraft;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.luaj.vm2.LuaTable;
@@ -18,6 +21,7 @@ public class ComputerThread {
 	
 	private int id;
 	private LinkedBlockingQueue<ComputerTask> tasks;
+	private HashMap<String, List<String>> eventListeners = new HashMap<String, List<String>>();
 	
 	public ComputerThread(final int id, ComputerBlockGUI gui) {
 		this.busy = false;
@@ -56,7 +60,7 @@ public class ComputerThread {
 	}
 	
 	public LuaTable initLua(final int CID) {
-		LuaTable lua = JsePlatform.debugGlobals();
+		final LuaTable lua = JsePlatform.debugGlobals();
 		
 		lua.set("collectgarbage", LuaValue.NIL);
 		lua.set("dofile", LuaValue.NIL);
@@ -200,6 +204,61 @@ public class ComputerThread {
 			}
 		});
 		lua.set("io", io);
+		
+		// Events API
+		LuaTable events = new LuaTable();
+		events.set("registerListener", new TwoArgFunction() {
+			public LuaValue call(LuaValue eventId, LuaValue functionName) {
+				if(!eventListeners.containsKey(eventId.toString())) {
+					eventListeners.put(eventId.toString(), new ArrayList<String>());
+				}
+				
+				if(!eventListeners.get(eventId.toString()).contains(functionName.toString())) { // Prevent from adding a callback multiple times
+					eventListeners.get(eventId.toString()).add(functionName.toString());
+				}
+				
+				return LuaValue.NIL;
+			}
+		});
+
+		events.set("unregisterListener", new TwoArgFunction() {
+			public LuaValue call(LuaValue eventId, LuaValue functionName) {
+				if(!eventListeners.containsKey(eventId.toString())) {
+					return LuaValue.NIL; // EventId isn't even registered, so how are we supposed to delete anything?
+				}
+				
+				if(eventListeners.get(eventId.toString()).contains(functionName.toString())) {
+					eventListeners.get(eventId.toString()).remove(functionName.toString());
+				}
+				
+				return LuaValue.NIL;
+			}
+		});
+
+		events.set("isRegistered", new TwoArgFunction() {
+			public LuaValue call(LuaValue eventId, LuaValue functionName) {
+				if(!eventListeners.containsKey(eventId.toString())) {
+					return LuaValue.FALSE; // EventId isn't even registered, so how can a callback be registered?
+				}
+				
+				return LuaValue.valueOf(eventListeners.get(eventId.toString()).contains(functionName.toString()));
+			}
+		});
+		
+		events.set("triggerEvent", new TwoArgFunction() {
+			public LuaValue call(LuaValue eventId, LuaValue message) {
+				if(!eventListeners.containsKey(eventId.toString())) { // EventId isn't even registered, so there's nothing to be called
+					return LuaValue.NIL;
+				}
+				
+				for(int i = 0; i < eventListeners.get(eventId.toString()).size(); i++) {
+					lua.get(eventListeners.get(eventId.toString()).get(i)).call(eventId, message);
+				}
+				
+				return LuaValue.NIL;
+			}
+		});
+		lua.set("event", events);
 		
 		return lua;
 	}
