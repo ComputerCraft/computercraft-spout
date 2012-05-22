@@ -29,7 +29,7 @@ Credits
 [License]: http://www.gnu.org/licenses/gpl.html
 [Page]: http://forums.spout.org/threads/computercraft.2654/
 [GitHub]: https://github.com/ComputerCraft/computercraft-spout
-[Issues]: 
+[Issues]: http://redmine.robbytu.net/projects/cc-spout/issues
 
 Support
 -------
