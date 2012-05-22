@@ -60,7 +60,7 @@ public class ComputerThread {
 	}
 	
 	public LuaTable initLua(final int CID) {
-		LuaTable lua = JsePlatform.debugGlobals();
+		final LuaTable lua = JsePlatform.debugGlobals();
 		
 		lua.set("collectgarbage", LuaValue.NIL);
 		lua.set("dofile", LuaValue.NIL);
@@ -252,7 +252,7 @@ public class ComputerThread {
 				}
 				
 				for(int i = 0; i < eventListeners.get(eventId.toString()).size(); i++) {
-					// TODO: Implement the actual triggering
+					lua.get(eventListeners.get(eventId.toString()).get(i)).call(eventId, message);
 				}
 				
 				return LuaValue.NIL;
