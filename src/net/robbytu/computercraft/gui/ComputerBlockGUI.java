@@ -49,12 +49,35 @@ public class ComputerBlockGUI {
 	public void addEntry(String text) {
 		
 		// Shitty work-around comin'!
-		
 		String newOutput1 = "";
 		String newOutput2 = "";
 		
-		if(this.output.getText() == "") newOutput1 = text;
-		else newOutput1 = this.output.getText() + "\n" + text;
+		// More shitty work-around comin'! YAY!
+		// TODO: Need to make this let the color "spill" over if it breaks down the lines into multiple lines
+		int maxOutputLength = 65; // TODO: play with this number to find the true max length
+		if (text.length() > maxOutputLength)  {
+			String tempText = text;
+			
+			if(!this.output.getText().isEmpty()) {
+				newOutput1 = this.output.getText() + "\n";
+			}
+			
+			while (tempText.length() > 0) {
+				if (tempText.length() <= maxOutputLength) {
+					newOutput1 += tempText;
+					break;
+				}
+				else {
+					newOutput1 += tempText.substring(0, maxOutputLength) + "\n";
+					tempText = tempText.substring(maxOutputLength);
+				}
+			}
+		}
+		else {
+			if(this.output.getText() == "") newOutput1 = text;
+			else newOutput1 = this.output.getText() + "\n" + text;
+		}
+		// End of more shitty work-around
 		
 		if(newOutput1.split("\n").length == 16) {
 			for(int i = 1; i < 16; i++) {
