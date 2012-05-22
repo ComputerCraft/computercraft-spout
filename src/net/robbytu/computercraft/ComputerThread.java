@@ -12,6 +12,7 @@ import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
+import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
 
 public class ComputerThread {
@@ -259,6 +260,38 @@ public class ComputerThread {
 			}
 		});
 		lua.set("event", events);
+		
+		LuaTable sys = new LuaTable();
+		sys.set("getComputerID", new ZeroArgFunction() {
+			public LuaValue call() {
+				return LuaValue.valueOf(id);
+			}
+		});
+		
+		sys.set("isWireless", new ZeroArgFunction() {
+			public LuaValue call() {
+				ComputerData data = CCMain.instance.getDatabase().find(ComputerData.class)
+						.where()
+							.eq("id", id)
+						.findUnique();
+				
+				return LuaValue.valueOf(data.isWireless());
+			}
+		});
+		
+		sys.set("getComputerCoords", new ZeroArgFunction() {
+			public LuaValue call() {
+				ComputerData data = CCMain.instance.getDatabase().find(ComputerData.class)
+				.where()
+					.eq("id", id)
+				.findUnique();
+				
+				String coords = data.getX() + "," + data.getY() + "," + data.getZ() + "," + data.getWorld();
+				
+				return LuaValue.valueOf(coords);
+			}
+		});
+		lua.set("sys", sys);
 		
 		return lua;
 	}
