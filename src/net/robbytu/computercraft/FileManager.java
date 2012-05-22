@@ -2,8 +2,6 @@ package net.robbytu.computercraft;
 
 import java.io.File;
 
-import org.bukkit.Bukkit;
-
 import net.robbytu.computercraft.database.ComputerData;
 
 public class FileManager {
@@ -34,8 +32,6 @@ public class FileManager {
 		int depth = 0;
 		
 		for (String pathPart : split) {
-			Bukkit.getLogger().info(pathPart);
-			Bukkit.getLogger().info("Before: " + Integer.toString(depth));
 			if (pathPart.equals("..")) {
 				if (depth == 0) {
 					return false;
@@ -47,7 +43,6 @@ public class FileManager {
 			else if (!pathPart.isEmpty()) {
 				depth++;
 			}
-			Bukkit.getLogger().info("After: " + Integer.toString(depth));
 		}
 		
 		File file = new File(computersDir, CID + "/" + path); // Potentially dangerous
