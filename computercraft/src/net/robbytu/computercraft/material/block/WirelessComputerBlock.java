@@ -12,7 +12,7 @@ public class WirelessComputerBlock extends ComputerBlock {
 
 	public WirelessComputerBlock(Plugin plugin, String name, boolean isOpaque, int face) {
 		super(plugin, name, isOpaque, face);
-		this.setName("WirelessComputer");
+		this.setName("Computer with Wireless Network Card");
 		
 		if (!name.equals("WirelessComputerBlockEast"))
 			setItemDrop(new SpoutItemStack(Materials.WirelessComputerBlockEast, 1));
