@@ -1,6 +1,7 @@
 package net.robbytu.computercraft.materials;
 
 import java.io.File;
+
 import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.ComputerTask;
 import net.robbytu.computercraft.ComputerThread;
@@ -12,11 +13,14 @@ import net.robbytu.computercraft.util.ScriptHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
+
+import org.getspout.spoutapi.block.SpoutBlock;
 import org.getspout.spoutapi.block.design.GenericCubeBlockDesign;
 import org.getspout.spoutapi.block.design.Texture;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.material.block.GenericCustomBlock;
 import org.getspout.spoutapi.player.SpoutPlayer;
+
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -139,7 +143,7 @@ public class ComputerBlock extends GenericCustomBlock{
 			return true;
 		}
 		
-		ComputerThread thread = new ComputerThread(data.getId(), new ComputerBlockGUI(data.getId()));
+		ComputerThread thread = new ComputerThread(data.getId(), new ComputerBlockGUI(data.getId()), (SpoutBlock)world.getBlockAt(x, y, z));
 		
 		CCMain.instance.ComputerThreads.put(Integer.toString(data.getId()), thread);
 		

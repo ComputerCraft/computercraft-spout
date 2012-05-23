@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.getspout.spoutapi.block.SpoutBlock;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -18,6 +19,7 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
 import net.robbytu.computercraft.materials.ComputerBlock;
+import net.robbytu.computercraft.util.BlockManager;
 import net.robbytu.computercraft.util.ScriptHelper;
 
 public class ComputerThread {
@@ -29,12 +31,16 @@ public class ComputerThread {
 	private LinkedBlockingQueue<ComputerTask> tasks;
 	private HashMap<String, List<String>> eventListeners = new HashMap<String, List<String>>();
 	
-	public ComputerThread(final int id, ComputerBlockGUI gui) {
+	private SpoutBlock block;
+	
+	public ComputerThread(final int id, ComputerBlockGUI gui, SpoutBlock block) {
 		this.busy = false;
 		this.gui = gui;
 		
 		this.id = id;
 		this.tasks = new LinkedBlockingQueue<ComputerTask>(100);
+		
+		this.block = block;
 		
 		this.thread = new Thread(new Runnable() {
 			public void run()  {
@@ -362,22 +368,21 @@ public class ComputerThread {
 		redstone.set("setOutput", new TwoArgFunction() {
 			public LuaValue call(LuaValue val1, LuaValue val2) {
 				// TODO: Implement setOutput
+				int side = val1.toint();
+				boolean power = val2.toboolean();
+				
+				if (side < 4) return LuaValue.NIL;
+				
+				SpoutBlock target = BlockManager.blockAtSide(block, side);
+				target.setBlockPowered(power);
 				
 				return LuaValue.NIL;
 			}
 		});
 		
-		redstone.set("getOutput", new OneArgFunction() {
+		redstone.set("isPowered", new OneArgFunction() {
 			public LuaValue call(LuaValue val) {
-				// TODO: Implement getOutput
-				
-				return LuaValue.FALSE;
-			}
-		});
-		
-		redstone.set("getInput", new OneArgFunction() {
-			public LuaValue call(LuaValue val) {
-				// TODO: Implement getInput
+				// TODO: Implement isPowered
 				
 				return LuaValue.FALSE;
 			}
