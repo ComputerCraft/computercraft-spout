@@ -370,7 +370,7 @@ public class ComputerThread {
 				int side = val1.toint();
 				boolean power = val2.toboolean();
 				
-				if (side > 4) return LuaValue.NIL;
+				if (side > 3) return LuaValue.NIL;
 				
 				SpoutBlock target = BlockManager.blockAtSide(block, side);
 				target.setBlockPowered(power);
@@ -381,9 +381,11 @@ public class ComputerThread {
 		
 		redstone.set("isPowered", new OneArgFunction() {
 			public LuaValue call(LuaValue val) {
-				// TODO: Implement isPowered
+				int side = val.toint();
+				if (side > 3) return LuaValue.NIL;
 				
-				return LuaValue.FALSE;
+				SpoutBlock target = BlockManager.blockAtSide(block, side);
+				return LuaValue.valueOf(target.isBlockPowered());
 			}
 		});
 		lua.set("redstone", redstone);
