@@ -1,6 +1,6 @@
 About
 -----
-ComputerCraft-Spout is a serverside plugin for Bukkit that utilises SpoutPlugin to allow players to vote when night time comes to change it back to day with a GUI
+ComputerCraft-Spout is a serverside plugin for Bukkit that utilises SpoutPlugin to allow players to use computers for advanced logic tasks and other functions that will be developed
 
 ComputerCraft-Spout is [open source][GitHub]
 [Report an issue][Issues]
@@ -16,10 +16,10 @@ Installation
 
 Credits
 -------
-[![Quantum-Sicarius](http://www.gravatar.com/avatar/cbcdbeb17461fb68c27befee29880127.png)](http://forums.spout.org/members/quantumsicarius.1017/)
-[![Guy_de_Siguro](http://www.gravatar.com/avatar/7962fc6e594821902af1f0752f34bf48.png)](http://forums.spout.org/members/guy_de_siguro.2464/)
 [![Robbietjuh](http://www.gravatar.com/avatar/e53a935bc1babc53caa6bb3ab3e7958a.jpg?s=192&d=http%3A%2F%2Fwww.spout.org%2Fhttp%3A%2F%2Fstatic.spout.org%2Fstyles%2Fflexile%2Fxenforo%2Favatars%2Favatar_male_l.png)](http://forums.spout.org/members/robbietjuh.9239/)
 [![bob3695](http://static.spout.org/styles/flexile/xenforo/avatars/avatar_male_l.png)](http://forums.spout.org/members/bob3695.10592/)
+[![Quantum-Sicarius](http://www.gravatar.com/avatar/cbcdbeb17461fb68c27befee29880127.png)](http://forums.spout.org/members/quantumsicarius.1017/)
+[![Guy_de_Siguro](http://www.gravatar.com/avatar/7962fc6e594821902af1f0752f34bf48.png)](http://forums.spout.org/members/guy_de_siguro.2464/)
 
 [Spout Wiki]: http://wiki.spout.org
 [Spout Link]: http://spout.org
