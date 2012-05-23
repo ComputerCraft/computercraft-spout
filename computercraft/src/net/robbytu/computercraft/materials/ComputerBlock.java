@@ -1,15 +1,13 @@
 package net.robbytu.computercraft.materials;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-
 import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.ComputerTask;
 import net.robbytu.computercraft.ComputerThread;
 import net.robbytu.computercraft.FileManager;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
+import net.robbytu.computercraft.util.ScriptHelper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -145,26 +143,22 @@ public class ComputerBlock extends GenericCustomBlock{
 		
 		CCMain.instance.ComputerThreads.put(Integer.toString(data.getId()), thread);
 		
-		thread.addTask(new ComputerTask() {
+		thread.addTask(getOSTask(data.getId()));
+		thread.gui.attachToScreen(player);
+		
+		return true;
+	}
+	
+	public static ComputerTask getOSTask(int CID) {
+		return new ComputerTask() {
 			@Override
 			public void execute(LuaTable lua, String ComputerID) {
 				File os = new File(CCMain.instance.getDataFolder() + "/rom/boot.lua");
 				try {
-					BufferedReader reader = new BufferedReader(new FileReader(os));
-					StringBuilder script = new StringBuilder("");
-					String output = reader.readLine();
-					
-					while(output != null) {
-						script.append(output);
-						output = reader.readLine();
-						
-						if(output != null) {
-							script.append("\n");
-						}
-					}
+					String script = ScriptHelper.getScript(os);
 					
 					try {
-						lua.get("loadstring").call(LuaValue.valueOf(script.toString())).call();
+						lua.get("loadstring").call(LuaValue.valueOf(script)).call();
 					}
 					catch(LuaError ex) {
 						lua.get("print").call(LuaValue.valueOf("¤c" + ex.getMessage()));
@@ -191,9 +185,6 @@ public class ComputerBlock extends GenericCustomBlock{
 					}
 				}
 			}
-		});
-		thread.gui.attachToScreen(player);
-		
-		return true;
+		};
 	}
 }

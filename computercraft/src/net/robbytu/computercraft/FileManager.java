@@ -67,6 +67,13 @@ public class FileManager {
 		else return false;
 	}
 	
+	public static File getFile(String path, String name, int CID) {
+		File file = new File(computersDir, CID + "/" + path + "/" + name); // Potentially dangerous
+		if (file.exists())
+			return file;
+		return null;
+	}
+	
 	public static void printList(String path, int CID) {
 		String[] rom_files = null;
 		String[] files = null;

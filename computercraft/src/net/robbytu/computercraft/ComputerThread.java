@@ -1,10 +1,13 @@
 package net.robbytu.computercraft;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.TwoArgFunction;
@@ -14,6 +17,8 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
+import net.robbytu.computercraft.materials.ComputerBlock;
+import net.robbytu.computercraft.util.ScriptHelper;
 
 public class ComputerThread {
 	public Thread thread;
@@ -100,6 +105,44 @@ public class ComputerThread {
 
                 return LuaValue.NIL;
             }
+		});
+		
+		lua.set("run", new TwoArgFunction() {
+			public LuaValue call(LuaValue val, LuaValue val2) {
+				File scriptFile = FileManager.getFile(val.toString(), val2.toString(), CID);
+				
+				if (scriptFile != null) {
+					try {
+						final String script = ScriptHelper.getScript(scriptFile);
+						
+						addTask(new ComputerTask() {
+							@Override
+							public void execute(LuaTable lua, String ComputerID) {
+								try {
+									lua.get("loadstring").call(LuaValue.valueOf(script)).call();
+								}
+								catch(LuaError ex) {
+									lua.get("print").call(LuaValue.valueOf("¤c" + ex.getMessage()));
+									lua.get("print").call(LuaValue.valueOf("¤7Script Failed."));
+									
+									ex.printStackTrace();
+								}
+							}
+						});
+						
+						addTask(ComputerBlock.getOSTask(CID));
+						
+						return LuaValue.TRUE;						
+					} catch (IOException e) {
+						lua.get("print").call(LuaValue.valueOf("¤7File unable to start!"));
+						e.printStackTrace();
+					}
+
+					return LuaValue.FALSE;
+				}
+				lua.get("print").call(LuaValue.valueOf("¤7File not found!"));
+				return LuaValue.FALSE;
+			}
 		});
 		
 		// color.* functions

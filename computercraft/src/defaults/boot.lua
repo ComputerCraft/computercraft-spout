@@ -4,6 +4,8 @@ _motd = "This is a test-version of ComputerCraft. TEST THIS SHIT YOAA" -- Don't 
 _show_motd = true
 _curdir = "/"
 
+_exit_shell = false
+
 -- Functions
 cd = function(dir)
    	_newdir = io.getDir(_curdir .. dir)
@@ -70,11 +72,17 @@ shell = function()
 		else
 			print(color.byString("RED") .. "Something went wrong!")
 		end
+	elseif string.sub(input, 0, 4) == "RUN " then
+		if run(_curdir, string.sub(input, 5)) then
+			_exit_shell = true
+		end
 	else
 		print(color.byString("RED") .. "Command not found.")
 	end
 	
-	shell()
+	if _exit_shell == false then
+		shell()
+	end
 end
 
 luaConsole = function()
