@@ -8,11 +8,13 @@ import net.robbytu.computercraft.FileManager;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
 import net.robbytu.computercraft.material.Materials;
+import net.robbytu.computercraft.util.BlockManager;
 import net.robbytu.computercraft.util.ScriptHelper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
+import org.getspout.spoutapi.block.SpoutBlock;
 import org.getspout.spoutapi.block.design.GenericCubeBlockDesign;
 import org.getspout.spoutapi.block.design.Texture;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
@@ -74,6 +76,11 @@ public class ComputerBlock extends GenericCustomBlock {
 						.findUnique();
 		
 		if(data != null) {
+			for(int i = 0; i < 3; i++) {
+				SpoutBlock target = BlockManager.blockAtSide((SpoutBlock)world.getBlockAt(x, y, z), i);
+				target.setBlockPowered(false);
+			}
+			
 			if(CCMain.instance.ComputerThreads.containsKey(Integer.toString(data.getId()))) {
 				CCMain.instance.ComputerThreads.get(Integer.toString(data.getId())).thread.interrupt();
 				CCMain.instance.ComputerThreads.remove(Integer.toString(data.getId()));
@@ -126,7 +133,7 @@ public class ComputerBlock extends GenericCustomBlock {
 			return true;
 		}
 		
-		ComputerThread thread = new ComputerThread(data.getId(), new ComputerBlockGUI(data.getId()));
+		ComputerThread thread = new ComputerThread(data.getId(), new ComputerBlockGUI(data.getId()), (SpoutBlock)world.getBlockAt(x, y, z));
 		
 		CCMain.instance.ComputerThreads.put(Integer.toString(data.getId()), thread);
 		

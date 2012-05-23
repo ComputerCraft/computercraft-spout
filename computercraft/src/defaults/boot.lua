@@ -1,5 +1,5 @@
 -- Vars
-_os = "CraftOS 0.0.1 Alpha"
+_os = "CraftOS 0.0.2 Alpha"
 _motd = "This is a test-version of ComputerCraft. TEST THIS SHIT YOAA" -- Don't make this too much longer!
 _show_motd = true
 _curdir = "/"
@@ -118,7 +118,7 @@ boot = function()
 	end
 	
 	if _try_boot_custom == true then
-		print("Would you like to boot custom OS? (Y/N)")
+		print("Would you like to start startup.lua? (Y/N)")
 		input = term.getInput()
 		if input == "Y" then
 			run(_curdir, "startup.lua")

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.getspout.spoutapi.block.SpoutBlock;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -18,6 +19,7 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
 import net.robbytu.computercraft.material.block.ComputerBlock;
+import net.robbytu.computercraft.util.BlockManager;
 import net.robbytu.computercraft.util.ScriptHelper;
 
 public class ComputerThread {
@@ -29,12 +31,16 @@ public class ComputerThread {
 	private LinkedBlockingQueue<ComputerTask> tasks;
 	private HashMap<String, List<String>> eventListeners = new HashMap<String, List<String>>();
 	
-	public ComputerThread(final int id, ComputerBlockGUI gui) {
+	private SpoutBlock block;
+	
+	public ComputerThread(final int id, ComputerBlockGUI gui, final SpoutBlock block) {
 		this.busy = false;
 		this.gui = gui;
 		
 		this.id = id;
 		this.tasks = new LinkedBlockingQueue<ComputerTask>(100);
+		
+		this.block = block;
 		
 		this.thread = new Thread(new Runnable() {
 			public void run()  {
@@ -54,9 +60,11 @@ public class ComputerThread {
 				}
 				finally {
 					busy = false;
+					
 					if(CCMain.instance.ComputerThreads.containsKey(Integer.toString(id))) {
 						CCMain.instance.ComputerThreads.remove(Integer.toString(id));
 					}
+					
 					thread.interrupt();
 				}
 			}
@@ -124,8 +132,6 @@ public class ComputerThread {
 								catch(LuaError ex) {
 									lua.get("print").call(LuaValue.valueOf("¤c" + ex.getMessage()));
 									lua.get("print").call(LuaValue.valueOf("¤7Script Failed."));
-									
-									ex.printStackTrace();
 								}
 							}
 						});
@@ -135,7 +141,6 @@ public class ComputerThread {
 						return LuaValue.TRUE;						
 					} catch (IOException e) {
 						lua.get("print").call(LuaValue.valueOf("¤7File unable to start!"));
-						e.printStackTrace();
 					}
 
 					return LuaValue.FALSE;
@@ -316,6 +321,7 @@ public class ComputerThread {
 		});
 		lua.set("event", events);
 		
+		// System API
 		LuaTable sys = new LuaTable();
 		sys.set("getComputerID", new ZeroArgFunction() {
 			public LuaValue call() {
@@ -346,7 +352,45 @@ public class ComputerThread {
 				return LuaValue.valueOf(coords);
 			}
 		});
+		
+		lua.set("shutdown", new ZeroArgFunction() {
+			public LuaValue call() {
+				// Do shutdown events, so that scripts might save configs for example
+				lua.get("triggerEvent").call(LuaValue.valueOf("shutdown"), LuaValue.NIL);
+				
+				thread.interrupt();
+				
+				return LuaValue.NIL;
+			}
+		});
 		lua.set("sys", sys);
+		
+		// Redstone API
+		LuaTable redstone = new LuaTable();
+		redstone.set("setOutput", new TwoArgFunction() {
+			public LuaValue call(LuaValue val1, LuaValue val2) {
+				int side = val1.toint();
+				boolean power = val2.toboolean();
+				
+				if (side > 3) return LuaValue.NIL;
+				
+				SpoutBlock target = BlockManager.blockAtSide(block, side);
+				target.setBlockPowered(power);
+
+				return LuaValue.NIL;
+			}
+		});
+		
+		redstone.set("isPowered", new OneArgFunction() {
+			public LuaValue call(LuaValue val) {
+				int side = val.toint();
+				if (side > 3) return LuaValue.NIL;
+				
+				SpoutBlock target = BlockManager.blockAtSide(block, side);
+				return LuaValue.valueOf(target.isBlockPowered());
+			}
+		});
+		lua.set("redstone", redstone);
 		
 		return lua;
 	}
