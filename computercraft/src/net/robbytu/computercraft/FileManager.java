@@ -2,6 +2,8 @@ package net.robbytu.computercraft;
 
 import java.io.File;
 
+import org.bukkit.Bukkit;
+
 import net.robbytu.computercraft.database.ComputerData;
 
 public class FileManager {
@@ -59,18 +61,22 @@ public class FileManager {
 	}
 	
 	public static boolean mkDir(String path, String name, int CID) {
-		File file = new File(computersDir, CID + "/" + path + "/" + name); // Potentially dangerous
-
-		if(file.exists() && file.isDirectory()) return true;
-		else if(file.exists()) return false;
-		else if(file.mkdir()) return true;
-		else return false;
+		if (getDir(path + "/" + name, CID) != "") {
+			File file = new File(computersDir, CID + "/" + path + "/" + name); // Potentially dangerous
+	
+			if(file.exists() && file.isDirectory()) return true;
+			else if(file.exists()) return false;
+			else if(file.mkdir()) return true;
+		}
+		return false;
 	}
 	
 	public static File getFile(String path, String name, int CID) {
-		File file = new File(computersDir, CID + "/" + path + "/" + name); // Potentially dangerous
-		if (file.exists())
-			return file;
+		if (getDir(path + "/" + name, CID) != "") {
+			File file = new File(computersDir, CID + "/" + path + "/" + name); // Potentially dangerous
+			if (file.exists())
+				return file;
+			}
 		return null;
 	}
 	
@@ -128,20 +134,22 @@ public class FileManager {
 			return "RM_ROOT_ACCESS_DENIED";
 		}
 		else {
-			File file = new File(computersDir, CID + "/" + path); // Potentially dangerous
-			if(!file.exists()) {
-				return "RM_DOES_NOT_EXIST";
+			String dir = getDir(path, CID);
+			
+			if (!dir.isEmpty() && !dir.equals("/")) {
+				File file = new File(computersDir, CID + "/" + path); // Potentially dangerous
+				if(!file.exists()) {
+					return "RM_DOES_NOT_EXIST";
+				}
+				else if(file.isDirectory()) {
+					removeDirectory(file);
+					return "RM_DIR_OK";
+				}
+				else if(!file.isDirectory() && file.delete()) {
+					return "RM_FILE_OK";
+				}
 			}
-			else if(file.isDirectory()) {
-				removeDirectory(file);
-				return "RM_DIR_OK";
-			}
-			else if(!file.isDirectory() && file.delete()) {
-				return "RM_FILE_OK";
-			}
-			else {
-				return "RM_FAIL";
-			}
+			return "RM_FAIL";
 		}
 	}
 	
