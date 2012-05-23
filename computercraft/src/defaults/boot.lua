@@ -118,7 +118,7 @@ boot = function()
 	end
 	
 	if _try_boot_custom == true then
-		print("Would you like to boot custom OS? (Y/N)")
+		print("Would you like to start startup.lua? (Y/N)")
 		input = term.getInput()
 		if input == "Y" then
 			run(_curdir, "startup.lua")
