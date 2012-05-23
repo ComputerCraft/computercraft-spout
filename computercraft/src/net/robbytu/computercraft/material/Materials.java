@@ -82,7 +82,7 @@ public class Materials {
 		SpoutShapelessRecipe WirelessComputerBlockRecipe = new SpoutShapelessRecipe(WirelessComputerBlockRecipeResult);
 		
 		WirelessComputerBlockRecipe.addIngredient(1, ComputerBlockEast);
-		WirelessComputerBlockRecipe.addIngredient(1, WirelessAdapterItem); // TODO: Update this to the new block
+		WirelessComputerBlockRecipe.addIngredient(1, WirelessAdapterItem);
 		
 		SpoutManager.getMaterialManager().registerSpoutRecipe(WirelessComputerBlockRecipe);
 	}
