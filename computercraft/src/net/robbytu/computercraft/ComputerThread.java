@@ -367,15 +367,14 @@ public class ComputerThread {
 		LuaTable redstone = new LuaTable();
 		redstone.set("setOutput", new TwoArgFunction() {
 			public LuaValue call(LuaValue val1, LuaValue val2) {
-				// TODO: Implement setOutput
 				int side = val1.toint();
 				boolean power = val2.toboolean();
 				
-				if (side < 4) return LuaValue.NIL;
+				if (side > 4) return LuaValue.NIL;
 				
 				SpoutBlock target = BlockManager.blockAtSide(block, side);
 				target.setBlockPowered(power);
-				
+
 				return LuaValue.NIL;
 			}
 		});
