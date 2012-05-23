@@ -133,7 +133,6 @@ public class ComputerThread {
 						return LuaValue.TRUE;						
 					} catch (IOException e) {
 						lua.get("print").call(LuaValue.valueOf("¤7File unable to start!"));
-						e.printStackTrace();
 					}
 
 					return LuaValue.FALSE;
