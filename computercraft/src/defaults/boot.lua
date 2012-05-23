@@ -1,5 +1,5 @@
 -- Vars
-_os = "CraftOS 0.0.1 Alpha"
+_os = "CraftOS 0.0.2 Alpha"
 _motd = "This is a test-version of ComputerCraft. TEST THIS SHIT YOAA" -- Don't make this too much longer!
 _show_motd = true
 _curdir = "/"
