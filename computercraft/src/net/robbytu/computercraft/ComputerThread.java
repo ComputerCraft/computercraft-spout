@@ -33,7 +33,7 @@ public class ComputerThread {
 	
 	private SpoutBlock block;
 	
-	public ComputerThread(final int id, ComputerBlockGUI gui, SpoutBlock block) {
+	public ComputerThread(final int id, ComputerBlockGUI gui, final SpoutBlock block) {
 		this.busy = false;
 		this.gui = gui;
 		
@@ -60,9 +60,11 @@ public class ComputerThread {
 				}
 				finally {
 					busy = false;
+					
 					if(CCMain.instance.ComputerThreads.containsKey(Integer.toString(id))) {
 						CCMain.instance.ComputerThreads.remove(Integer.toString(id));
 					}
+					
 					thread.interrupt();
 				}
 			}

@@ -8,6 +8,7 @@ import net.robbytu.computercraft.ComputerThread;
 import net.robbytu.computercraft.FileManager;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
+import net.robbytu.computercraft.util.BlockManager;
 import net.robbytu.computercraft.util.ScriptHelper;
 
 import org.bukkit.Bukkit;
@@ -72,6 +73,11 @@ public class ComputerBlock extends GenericCustomBlock{
 						.findUnique();
 		
 		if(data != null) {
+			for(int i = 0; i < 3; i++) {
+				SpoutBlock target = BlockManager.blockAtSide((SpoutBlock)world.getBlockAt(x, y, z), i);
+				target.setBlockPowered(false);
+			}
+			
 			if(CCMain.instance.ComputerThreads.containsKey(Integer.toString(data.getId()))) {
 				CCMain.instance.ComputerThreads.get(Integer.toString(data.getId())).thread.interrupt();
 				CCMain.instance.ComputerThreads.remove(Integer.toString(data.getId()));
