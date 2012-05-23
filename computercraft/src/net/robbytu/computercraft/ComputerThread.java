@@ -253,6 +253,12 @@ public class ComputerThread {
 				return LuaValue.valueOf(FileManager.getDir(val.toString(), CID));
 			}
 		});
+		
+		io.set("fileExists", new TwoArgFunction () {
+			public LuaValue call(LuaValue val, LuaValue val2) {
+				return LuaValue.valueOf(FileManager.fileExists(val.toString(), val2.toString(), CID));
+			}
+		});
 		lua.set("io", io);
 		
 		// Events API

@@ -149,7 +149,7 @@ public class ComputerBlock extends GenericCustomBlock{
 		return true;
 	}
 	
-	public static ComputerTask getOSTask(int CID) {
+	public static ComputerTask getOSTask(final int CID) {
 		return new ComputerTask() {
 			@Override
 			public void execute(LuaTable lua, String ComputerID) {

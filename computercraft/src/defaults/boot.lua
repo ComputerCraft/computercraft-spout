@@ -110,13 +110,31 @@ eh = function(s)
 end
 
 boot = function()
-	print(_os .. "\n")
-	if _show_motd then
-		motd()
-		print(" ")	-- new line, looks better
+	_try_boot_custom = false
+	_booting_custom = false
+	
+	if io.fileExists(_curdir, "startup.lua") then
+		_try_boot_custom = true
 	end
-	pwd()
-	shell()
+	
+	if _try_boot_custom == true then
+		print("Would you like to boot custom OS? (Y/N)")
+		input = term.getInput()
+		if input == "Y" then
+			run(_curdir, "startup.lua")
+			_booting_custom = true
+		end
+	end
+	
+	if _booting_custom == false then
+		print(_os .. "\n")
+		if _show_motd then
+			motd()
+			print(" ")	-- new line, looks better
+		end
+		pwd()
+		shell()
+	end
 end
 
 boot()

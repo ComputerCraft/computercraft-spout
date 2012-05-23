@@ -74,6 +74,10 @@ public class FileManager {
 		return null;
 	}
 	
+	public static boolean fileExists(String path, String name, int CID) {
+		return (getFile(path, name, CID) != null);
+	}
+	
 	public static void printList(String path, int CID) {
 		String[] rom_files = null;
 		String[] files = null;
