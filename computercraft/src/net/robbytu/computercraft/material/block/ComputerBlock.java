@@ -1,4 +1,4 @@
-package net.robbytu.computercraft.materials;
+package net.robbytu.computercraft.material.block;
 
 import java.io.File;
 import net.robbytu.computercraft.CCMain;
@@ -7,6 +7,7 @@ import net.robbytu.computercraft.ComputerThread;
 import net.robbytu.computercraft.FileManager;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
+import net.robbytu.computercraft.material.Materials;
 import net.robbytu.computercraft.util.ScriptHelper;
 
 import org.bukkit.Bukkit;
@@ -21,40 +22,45 @@ import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
-public class ComputerBlock extends GenericCustomBlock{
+public class ComputerBlock extends GenericCustomBlock {
 
 	public ComputerBlock(Plugin plugin, String name, boolean isOpaque, int face) {
 		super(plugin, name, isOpaque);
-
+		this.setName("Computer");
+		if (!name.equals("ComputerBlockEast"))
+			setItemDrop(new SpoutItemStack(Materials.ComputerBlockEast, 1));
+		setupDesign(plugin, face, "http://robbytu.net/spout/computercraft/resources/computerblock.png");
+	}
+	
+	private void setupDesign(Plugin plugin, int face, String texture) {
 		GenericCubeBlockDesign BlockDesign;
 		
 		if(face == 0) {
 			BlockDesign = new GenericCubeBlockDesign(
 					plugin,
-					new Texture(plugin, "http://robbytu.net/spout/computercraft/resources/computerblock.png", 256, 256, 16),
+					new Texture(plugin, texture, 256, 256, 16),
 					new int[] { 2, 2, 2, 0, 2, 2 });
 		}
 		else if(face == 1) {
 			BlockDesign = new GenericCubeBlockDesign(
 					plugin,
-					new Texture(plugin, "http://robbytu.net/spout/computercraft/resources/computerblock.png", 256, 256, 16),
+					new Texture(plugin, texture, 256, 256, 16),
 					new int[] { 2, 0, 2, 2, 2, 2 });
 		}
 		else if(face == 3) {
 			BlockDesign = new GenericCubeBlockDesign(
 					plugin,
-					new Texture(plugin, "http://robbytu.net/spout/computercraft/resources/computerblock.png", 256, 256, 16),
+					new Texture(plugin, texture, 256, 256, 16),
 					new int[] { 2, 2, 2, 2, 0, 2 });
 		}
 		else {
 			BlockDesign = new GenericCubeBlockDesign(
 					plugin,
-					new Texture(plugin, "http://robbytu.net/spout/computercraft/resources/computerblock.png", 256, 256, 16),
+					new Texture(plugin, texture, 256, 256, 16),
 					new int[] { 2, 2, 0, 2, 2, 2 });
 		}
 		
 		this.setBlockDesign(BlockDesign);
-		this.setName("Computer");
 	}
 
 	@Override
@@ -81,26 +87,7 @@ public class ComputerBlock extends GenericCustomBlock{
 	
 	@Override
 	public void onBlockPlace(World world, int x, int y, int z) {
-		this.setItemDrop(new SpoutItemStack(Materials.ComputerBlockEast, 1));
-		ComputerData data = CCMain.instance.getDatabase().find(ComputerData.class)
-						.where()
-							.eq("x", x)
-							.eq("y", y)
-							.eq("z", z)
-							.eq("world", (String)world.getName())
-						.findUnique();
-		
-		if(data == null) {
-			data = new ComputerData();
-			data.setX(x);
-			data.setY(y);
-			data.setZ(z);
-			data.setWorld(world.getName());
-			
-			CCMain.instance.getDatabase().save(data);
-			
-			FileManager.newComputerEvent(data);
-		}
+		onBlockPlace(world, x, y, z, false);
 	}
 	
 	@Override
@@ -186,5 +173,29 @@ public class ComputerBlock extends GenericCustomBlock{
 				}
 			}
 		};
+	}
+	
+	protected void onBlockPlace(World world, int x, int y, int z, boolean isWireless) {
+		//this.setItemDrop(new SpoutItemStack(Materials.ComputerBlockEast, 1));
+		ComputerData data = CCMain.instance.getDatabase().find(ComputerData.class)
+						.where()
+							.eq("x", x)
+							.eq("y", y)
+							.eq("z", z)
+							.eq("world", (String)world.getName())
+						.findUnique();
+		
+		if(data == null) {
+			data = new ComputerData();
+			data.setX(x);
+			data.setY(y);
+			data.setZ(z);
+			data.setWorld(world.getName());
+			data.setWireless(isWireless);
+			
+			CCMain.instance.getDatabase().save(data);
+			
+			FileManager.newComputerEvent(data);
+		}
 	}
 }

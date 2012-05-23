@@ -17,7 +17,7 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
-import net.robbytu.computercraft.materials.ComputerBlock;
+import net.robbytu.computercraft.material.block.ComputerBlock;
 import net.robbytu.computercraft.util.ScriptHelper;
 
 public class ComputerThread {

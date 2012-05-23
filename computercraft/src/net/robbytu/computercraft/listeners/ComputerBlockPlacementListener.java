@@ -1,7 +1,7 @@
 package net.robbytu.computercraft.listeners;
 
-import net.robbytu.computercraft.materials.ComputerBlock;
-import net.robbytu.computercraft.materials.Materials;
+import net.robbytu.computercraft.material.Materials;
+import net.robbytu.computercraft.material.block.ComputerBlock;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

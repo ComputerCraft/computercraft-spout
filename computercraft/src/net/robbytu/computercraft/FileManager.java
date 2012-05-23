@@ -2,8 +2,6 @@ package net.robbytu.computercraft;
 
 import java.io.File;
 
-import org.bukkit.Bukkit;
-
 import net.robbytu.computercraft.database.ComputerData;
 
 public class FileManager {

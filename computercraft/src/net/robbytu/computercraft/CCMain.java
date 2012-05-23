@@ -11,14 +11,10 @@ import java.util.List;
 
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.listeners.ComputerBlockPlacementListener;
-import net.robbytu.computercraft.materials.Materials;
+import net.robbytu.computercraft.material.Materials;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.getspout.spoutapi.SpoutManager;
-import org.getspout.spoutapi.inventory.SpoutItemStack;
-import org.getspout.spoutapi.inventory.SpoutShapedRecipe;
-import org.getspout.spoutapi.material.MaterialData;
 
 public class CCMain extends JavaPlugin {
 	
@@ -69,7 +65,6 @@ public class CCMain extends JavaPlugin {
 		
 		// Register recipes with Spout
 		new Materials();
-		this.registerRecipes();
 		
 		// Register listeners
 		Bukkit.getPluginManager().registerEvents(new ComputerBlockPlacementListener(), this);
@@ -96,15 +91,5 @@ public class CCMain extends JavaPlugin {
 		
 		return list;
 	}
-	public void registerRecipes() {
-		SpoutItemStack ComputerBlockRecipeResult = new SpoutItemStack(Materials.ComputerBlockEast);
-		SpoutShapedRecipe ComputerBlockRecipe = new SpoutShapedRecipe(ComputerBlockRecipeResult);
-		
-		ComputerBlockRecipe.shape("AAA", "ABA", "ACA");
-		ComputerBlockRecipe.setIngredient('A', MaterialData.stone);
-		ComputerBlockRecipe.setIngredient('B', MaterialData.redstone);
-		ComputerBlockRecipe.setIngredient('C', MaterialData.glassPane);
-		
-		SpoutManager.getMaterialManager().registerSpoutRecipe(ComputerBlockRecipe);
-	}
+	
 }
