@@ -26,12 +26,22 @@ public class ComputerBlockPlacementListener implements Listener {
 			double yaw = (event.getPlayer().getLocation().getYaw() - 90) % 360;
 			if(yaw < 0) yaw += 360.0;
 			
-			if(0 <= yaw && yaw < 45) NewBlock = Materials.ComputerBlockEast;
-			else if(45 <= yaw && yaw < 135) NewBlock = Materials.ComputerBlockSouth;
-			else if(135 <= yaw && yaw < 215) NewBlock = Materials.ComputerBlockWest;
-			else if(215 <= yaw && yaw < 305) NewBlock = Materials.ComputerBlockNorth;
-			else if(305 <= yaw && yaw <= 360) NewBlock = Materials.ComputerBlockEast;
-			else NewBlock = Materials.ComputerBlockSouth;
+			if(!((SpoutBlock)event.getBlock()).getCustomBlock().getName().contains("Wireless")) {
+				if(0 <= yaw && yaw < 45) NewBlock = Materials.ComputerBlockEast;
+				else if(45 <= yaw && yaw < 135) NewBlock = Materials.ComputerBlockSouth;
+				else if(135 <= yaw && yaw < 215) NewBlock = Materials.ComputerBlockWest;
+				else if(215 <= yaw && yaw < 305) NewBlock = Materials.ComputerBlockNorth;
+				else if(305 <= yaw && yaw <= 360) NewBlock = Materials.ComputerBlockEast;
+				else NewBlock = Materials.ComputerBlockSouth;
+			}
+			else {
+				if(0 <= yaw && yaw < 45) NewBlock = Materials.WirelessComputerBlockEast;
+				else if(45 <= yaw && yaw < 135) NewBlock = Materials.WirelessComputerBlockSouth;
+				else if(135 <= yaw && yaw < 215) NewBlock = Materials.WirelessComputerBlockWest;
+				else if(215 <= yaw && yaw < 305) NewBlock = Materials.WirelessComputerBlockNorth;
+				else if(305 <= yaw && yaw <= 360) NewBlock = Materials.WirelessComputerBlockEast;
+				else NewBlock = Materials.WirelessComputerBlockSouth;
+			}
 			
 			((SpoutBlock)event.getBlock()).setCustomBlock(NewBlock);
 			SpoutManager.getMaterialManager().overrideBlock((SpoutBlock)event.getBlock(), NewBlock);
