@@ -124,8 +124,6 @@ public class ComputerThread {
 								catch(LuaError ex) {
 									lua.get("print").call(LuaValue.valueOf("¤c" + ex.getMessage()));
 									lua.get("print").call(LuaValue.valueOf("¤7Script Failed."));
-									
-									ex.printStackTrace();
 								}
 							}
 						});
