@@ -357,6 +357,33 @@ public class ComputerThread {
 		});
 		lua.set("sys", sys);
 		
+		// Redstone API
+		LuaTable redstone = new LuaTable();
+		redstone.set("setOutput", new TwoArgFunction() {
+			public LuaValue call(LuaValue val1, LuaValue val2) {
+				// TODO: Implement setOutput
+				
+				return LuaValue.NIL;
+			}
+		});
+		
+		redstone.set("getOutput", new OneArgFunction() {
+			public LuaValue call(LuaValue val) {
+				// TODO: Implement getOutput
+				
+				return LuaValue.FALSE;
+			}
+		});
+		
+		redstone.set("getInput", new OneArgFunction() {
+			public LuaValue call(LuaValue val) {
+				// TODO: Implement getInput
+				
+				return LuaValue.FALSE;
+			}
+		});
+		lua.set("redstone", redstone);
+		
 		return lua;
 	}
 	
