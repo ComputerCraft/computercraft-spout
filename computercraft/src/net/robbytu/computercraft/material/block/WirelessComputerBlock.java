@@ -27,25 +27,25 @@ public class WirelessComputerBlock extends ComputerBlock {
 			BlockDesign = new GenericCubeBlockDesign(
 					plugin,
 					new Texture(plugin, texture, 256, 256, 16),
-					new int[] { 2, 2, 2, 0, 2, 3 });
+					new int[] { 2, 3, 3, 0, 3, 2 });
 		}
 		else if(face == 1) {
 			BlockDesign = new GenericCubeBlockDesign(
 					plugin,
 					new Texture(plugin, texture, 256, 256, 16),
-					new int[] { 2, 0, 2, 2, 2, 3 });
+					new int[] { 2, 0, 3, 3, 3, 2 });
 		}
 		else if(face == 3) {
 			BlockDesign = new GenericCubeBlockDesign(
 					plugin,
 					new Texture(plugin, texture, 256, 256, 16),
-					new int[] { 2, 2, 2, 2, 0, 3 });
+					new int[] { 2, 3, 3, 3, 0, 2 });
 		}
 		else {
 			BlockDesign = new GenericCubeBlockDesign(
 					plugin,
 					new Texture(plugin, texture, 256, 256, 16),
-					new int[] { 2, 2, 0, 2, 2, 3 });
+					new int[] { 2, 3, 0, 3, 3, 2 });
 		}
 		
 		this.setBlockDesign(BlockDesign);
