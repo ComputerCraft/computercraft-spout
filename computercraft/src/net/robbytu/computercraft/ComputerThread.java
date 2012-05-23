@@ -316,6 +316,7 @@ public class ComputerThread {
 		});
 		lua.set("event", events);
 		
+		// System API
 		LuaTable sys = new LuaTable();
 		sys.set("getComputerID", new ZeroArgFunction() {
 			public LuaValue call() {
@@ -344,6 +345,17 @@ public class ComputerThread {
 				String coords = data.getX() + "," + data.getY() + "," + data.getZ() + "," + data.getWorld();
 				
 				return LuaValue.valueOf(coords);
+			}
+		});
+		
+		lua.set("shutdown", new ZeroArgFunction() {
+			public LuaValue call() {
+				// Do shutdown events, so that scripts might save configs for example
+				lua.get("triggerEvent").call(LuaValue.valueOf("shutdown"), LuaValue.NIL);
+				
+				thread.interrupt();
+				
+				return LuaValue.NIL;
 			}
 		});
 		lua.set("sys", sys);
