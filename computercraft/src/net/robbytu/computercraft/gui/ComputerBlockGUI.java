@@ -54,7 +54,7 @@ public class ComputerBlockGUI {
 		
 		// More shitty work-around comin'! YAY!
 		// TODO: Need to make this let the color "spill" over if it breaks down the lines into multiple lines
-		int maxOutputLength = 65; // TODO: play with this number to find the true max length
+		int maxOutputLength = 65; 
 		if (text.length() > maxOutputLength)  {
 			String tempText = text;
 			
@@ -77,9 +77,22 @@ public class ComputerBlockGUI {
 			if(this.output.getText() == "") newOutput1 = text;
 			else newOutput1 = this.output.getText() + "\n" + text;
 		}
-		// End of more shitty work-around
+		// End of more shitty work-around		
+		String[] splitOutput = newOutput1.split("\n");
+		if (splitOutput.length >= 15) {
+			int startIndex = splitOutput.length - 14;
+			for (int i = startIndex; i < splitOutput.length; i++) {
+				if(newOutput2 != "") {
+					newOutput2 = newOutput2 + "\n" + splitOutput[i];
+				}
+				else newOutput2 = newOutput2 + splitOutput[i];
+			}
+		}
+		else
+			newOutput2 = newOutput1;
 		
-		if(newOutput1.split("\n").length == 16) {
+		
+		/*if(newOutput1.split("\n").length >= 16) {
 			for(int i = 1; i < 16; i++) {
 				if(newOutput2 != "") {
 					newOutput2 = newOutput2 + "\n" + newOutput1.split("\n")[i];
@@ -89,7 +102,7 @@ public class ComputerBlockGUI {
 		}
 		else {
 			newOutput2 = newOutput1;
-		}
+		}*/
 		
 		// End of shitty work-around :)
 		
