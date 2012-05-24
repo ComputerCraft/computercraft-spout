@@ -71,10 +71,8 @@ public class ComputerBlockGUI {
 				}
 				else {
 					int lastColorIndex = tempText.lastIndexOf("¤", maxOutputLength);
-					Bukkit.getLogger().info("" + lastColorIndex);
 					if (lastColorIndex > -1) {
 						lastColor = tempText.substring(lastColorIndex, lastColorIndex + 2);
-						Bukkit.getLogger().info(lastColor + " this is the last color");
 					}
 					newOutput1 += tempText.substring(0, maxOutputLength) + "\n" + lastColor;
 					tempText = tempText.substring(maxOutputLength);
