@@ -29,6 +29,9 @@ public class RouterData {
 	
 	private String password;
 	
+	@NotNull
+	private int antennas;
+	
 	public int getId() {
 		return id;
 	}
@@ -83,5 +86,13 @@ public class RouterData {
 	
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public int getAntennas() {
+		return this.antennas;
+	}
+	
+	public void setAntennas(int num) {
+		this.antennas = num;
 	}
 }
