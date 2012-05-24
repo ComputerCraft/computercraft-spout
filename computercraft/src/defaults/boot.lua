@@ -51,15 +51,13 @@ wlc = function()
 	PWD = term.getInput()
 
 	RET = rednet.connect(SSID, PWD)
-	
+
 	if RET == "RN_CONNECTED" then
 		print(color.byString("GREEN") .. "Now connected to " .. SSID)
 	else
 		print(color.byString("RED") .. "Failed to connect with error " .. RET)
 	end
 end
-
-
 
 pwd = function()
 	print(color.byString("GRAY") .. "Working directory: " .. _curdir)
@@ -103,7 +101,7 @@ shell = function()
 		end
 	elseif string.sub(input, 0, 9) == "VIEWFILE " then
 		_fileContents = io.getFile(_curdir, string.sub(input, 10))
-	
+
 		if _fileContents == nil then
 			print(color.byString("RED") .. "Something went wrong!")
 		else
@@ -114,7 +112,7 @@ shell = function()
 	else
 		print(color.byString("RED") .. "Command not found.")
 	end
-	
+
 	if _exit_shell == false then
 		shell()
 	end
@@ -151,11 +149,11 @@ end
 boot = function()
 	_try_boot_custom = false
 	_booting_custom = false
-	
+
 	if io.fileExists(_curdir, "startup.lua") then
 		_try_boot_custom = true
 	end
-	
+
 	if _try_boot_custom == true then
 		print("Would you like to start startup.lua? (Y/N)")
 		input = term.getInput()
@@ -164,10 +162,10 @@ boot = function()
 			_booting_custom = true
 		end
 	end
-	
+
 	if _booting_custom == false then
 		event.registerListener("rednet_receive", "ev")
-	
+
 		print(_os .. "\n")
 		if _show_motd then
 			motd()
