@@ -17,6 +17,7 @@ import org.luaj.vm2.lib.ZeroArgFunction;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
 import net.robbytu.computercraft.CCMain;
+import net.robbytu.computercraft.computer.network.RednetHandler;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
 import net.robbytu.computercraft.material.block.ComputerBlock;
@@ -407,6 +408,21 @@ public class ComputerThread {
 			}
 		});
 		lua.set("redstone", redstone);
+		
+		// Network API - This is for both internal and world-wide networking
+		LuaTable rednet = new LuaTable();
+		rednet.set("scan", new OneArgFunction() {
+			public LuaValue call(LuaValue val1) {
+				
+				return LuaValue.NIL;
+			}
+		});
+		
+		rednet.set("connect", new TwoArgFunction() {
+			public LuaValue call(LuaValue val1, LuaValue val2) {
+				return LuaValue.valueOf(RednetHandler.connect(val1.toString(), val2.toString(), CID));
+			}
+		});
 		
 		return lua;
 	}
