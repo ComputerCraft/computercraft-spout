@@ -3,10 +3,10 @@ package net.robbytu.computercraft.util;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigManager {
-	public static int maxRouterDistance;
+	public static int antennaRange;
 	
 	public static void loadConfig(FileConfiguration config) {
 		config.options().copyDefaults(true);
-		maxRouterDistance = config.getInt("routers.max_distance", 10);
+		antennaRange = config.getInt("antennas.range", 10);
 	}
 }
