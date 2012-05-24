@@ -25,7 +25,7 @@ public class RednetHandler {
 		if (computerLocation.toVector().subtract(routerLocation.toVector()).lengthSquared() <= ConfigManager.antennaRange * 2) { // TODO: Replace two with the number of antennas router has
 			// Router within distance!
 			if ("NETWORKPASSWORDHERE".equals(password)) {
-				data.setNetworkName("SSID");
+				data.setSSID("SSID");
 				data.setNetworkPassword("PASSWORD");
 				CCMain.instance.getDatabase().save(data);
 				return "RN_CONNECTED";

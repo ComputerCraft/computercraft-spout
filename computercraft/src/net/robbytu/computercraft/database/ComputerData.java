@@ -27,7 +27,7 @@ public class ComputerData {
 	
 	private boolean wireless = false;
 	
-	private String networkName;
+	private String SSID;
 	
 	private String networkPassword;
 	
@@ -79,12 +79,12 @@ public class ComputerData {
 		this.wireless = Wireless;
 	}
 	
-	public String getNetworkName() {
-		return networkName;
+	public String getSSID() {
+		return SSID;
 	}
 	
-	public void setNetworkName(String networkName) {
-		this.networkName = networkName;
+	public void setSSID(String SSID) {
+		this.SSID = SSID;
 	}
 	
 	public String getNetworkPassword() {
