@@ -20,6 +20,7 @@ import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
 import net.robbytu.computercraft.material.block.ComputerBlock;
 import net.robbytu.computercraft.util.BlockManager;
+import net.robbytu.computercraft.util.LuaHelper;
 import net.robbytu.computercraft.util.ScriptHelper;
 
 public class ComputerThread {
@@ -262,6 +263,21 @@ public class ComputerThread {
 		io.set("fileExists", new TwoArgFunction () {
 			public LuaValue call(LuaValue val, LuaValue val2) {
 				return LuaValue.valueOf(FileManager.fileExists(val.toString(), val2.toString(), CID));
+			}
+		});
+		
+		io.set("mkFile", new TwoArgFunction() {
+			public LuaValue call(LuaValue val, LuaValue val2) {
+				return LuaValue.valueOf(FileManager.mkFile(val.toString(), val2.toString(), CID));
+			}
+		});
+		
+		io.set("getFile", new TwoArgFunction() {
+			public LuaValue call(LuaValue val, LuaValue val2) {
+				List<String> stringList = FileManager.getFileAsStringList(val.toString(), val2.toString(), CID);
+				if (stringList != null) 
+					return LuaHelper.stringListToLuaTable(stringList);
+				return LuaValue.NIL;
 			}
 		});
 		lua.set("io", io);
