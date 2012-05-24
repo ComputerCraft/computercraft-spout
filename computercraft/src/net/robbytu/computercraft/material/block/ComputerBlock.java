@@ -133,7 +133,7 @@ public class ComputerBlock extends GenericCustomBlock {
 			return true;
 		}
 		
-		ComputerThread thread = new ComputerThread(data.getId(), new ComputerBlockGUI(data.getId()), (SpoutBlock)world.getBlockAt(x, y, z));
+		ComputerThread thread = new ComputerThread(data.getId(), new ComputerBlockGUI(data.getId()), (SpoutBlock)world.getBlockAt(x, y, z), data.isWireless());
 		
 		CCMain.instance.ComputerThreads.put(Integer.toString(data.getId()), thread);
 		

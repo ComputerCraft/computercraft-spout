@@ -42,6 +42,25 @@ rm = function(filename)
 	end
 end
 
+wlc = function()
+	print("Please enter your SSID:")
+	term.setInputTip("SSID")
+	SSID = term.getInput()
+	print("Enter network's password: ")
+	term.setInputTip("Password (optional)")
+	PWD = term.getInput()
+
+	RET = rednet.connect(SSID, PWD)
+	
+	if RET == "RN_CONNECTED" then
+		print(color.byString("GREEN") .. "Now connected to " .. SSID)
+	else
+		print(color.byString("RED") .. "Failed to connect with error " .. RET)
+	end
+end
+
+
+
 pwd = function()
 	print(color.byString("GRAY") .. "Working directory: " .. _curdir)
 end
@@ -90,6 +109,8 @@ shell = function()
 		else
 			print(_fileContents)
 		end
+	elseif string.sub(input, 0, 7) == "CONNECT" then
+		wlc()
 	else
 		print(color.byString("RED") .. "Command not found.")
 	end

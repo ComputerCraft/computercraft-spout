@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.bukkit.Bukkit;
 import org.getspout.spoutapi.block.SpoutBlock;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
@@ -35,7 +36,12 @@ public class ComputerThread {
 	
 	private SpoutBlock block;
 	
-	public ComputerThread(final int id, ComputerBlockGUI gui, final SpoutBlock block) {
+	private boolean isWireless;
+	private String SSID;
+	
+	private LuaTable lua;
+	
+	public ComputerThread(final int id, ComputerBlockGUI gui, final SpoutBlock block, boolean isWireless) {
 		this.busy = false;
 		this.gui = gui;
 		
@@ -44,10 +50,12 @@ public class ComputerThread {
 		
 		this.block = block;
 		
+		this.isWireless = isWireless;
+		
 		this.thread = new Thread(new Runnable() {
 			public void run()  {
 				try {
-					LuaTable lua = initLua(id);
+					lua = initLua(id);
 					
 					while(true) {
 						ComputerTask task = tasks.take();
@@ -73,6 +81,20 @@ public class ComputerThread {
 		});
 		
 		thread.start();
+	}
+	
+	public String connectedSSID() {
+		return SSID;
+	}
+	
+	public void triggerEvent(String eventId, String message) {
+		if(!eventListeners.containsKey(eventId)) { // EventId isn't even registered, so there's nothing to be called
+			return;
+		}
+		
+		for(int i = 0; i < eventListeners.get(eventId).size(); i++) {
+			lua.get(eventListeners.get(eventId).get(i)).call(LuaValue.valueOf(eventId), LuaValue.valueOf(message));
+		}
 	}
 	
 	public LuaTable initLua(final int CID) {
@@ -210,18 +232,24 @@ public class ComputerThread {
 		
 		term.set("getInput", new ZeroArgFunction() {
 			public LuaValue call() {
+				gui.buttonClicked = false;
 				gui.input.setEnabled(true);
 				
 				String inp = "";
-				while(inp.equals("")) {
-					inp = gui.inputBuffer;
+				//while(inp.equals("")) {
+				while(!gui.buttonClicked) {
+					//inp = gui.inputBuffer;
 					try {
 						Thread.sleep(100); // Don't remove. If you do, your CPU is not going to be happy with you
 					} catch (InterruptedException e) {
-						inp = "ERR_THREAD_INTERUPTION";
+						gui.inputBuffer = "";
+						gui.input.setEnabled(false);
+						return LuaValue.valueOf("ERR_THREAD_INTERUPTION");
 					}
 				}
-				
+		
+				inp = gui.inputBuffer;
+								
 				gui.inputBuffer = "";
 				gui.input.setEnabled(false);
 				
@@ -411,24 +439,33 @@ public class ComputerThread {
 		
 		// Network API - This is for both internal and world-wide networking
 		LuaTable rednet = new LuaTable();
-		rednet.set("scan", new OneArgFunction() {
-			public LuaValue call(LuaValue val1) {
-				
-				return LuaValue.NIL;
+		rednet.set("send", new TwoArgFunction() {
+			public LuaValue call(LuaValue val1, LuaValue val2) {
+				if (isWireless) {
+					if (!SSID.isEmpty()) {
+						return LuaValue.valueOf(RednetHandler.send(val1.toint(), val2.toString(), SSID, CID));
+					}
+					return LuaValue.valueOf("RN_NO_CONNECTION");
+				}
+				return LuaValue.valueOf("RN_NO_WIRELESS");
 			}
 		});
 		
 		rednet.set("connect", new TwoArgFunction() {
 			public LuaValue call(LuaValue val1, LuaValue val2) {
-				String ret = RednetHandler.connect(val1.toString(), val2.toString(), CID);
-				
-				if (ret.equals("RN_CONNECTED")) {
-					// Store the connection here!
+				if (isWireless) {
+					String ret = RednetHandler.connect(val1.toString(), val2.toString().trim(), CID);
+					
+					if (ret.equals("RN_CONNECTED")) {
+						SSID = val1.toString();
+					}
+					
+					return LuaValue.valueOf(ret);
 				}
-				
-				return LuaValue.valueOf(ret);
+				return LuaValue.valueOf("RN_NO_WIRELESS");
 			}
 		});
+		lua.set("rednet", rednet);
 		
 		return lua;
 	}

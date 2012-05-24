@@ -1,6 +1,7 @@
 package net.robbytu.computercraft.computer.network;
 
 import net.robbytu.computercraft.CCMain;
+import net.robbytu.computercraft.computer.ComputerThread;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.database.RouterData;
 import net.robbytu.computercraft.util.ConfigManager;
@@ -26,7 +27,12 @@ public class RednetHandler {
 			Location computerLocation = new Location(Bukkit.getWorld(computerData.getWorld()), computerData.getX(), computerData.getY(), computerData.getZ());
 			Location routerLocation = new Location(Bukkit.getWorld(routerData.getWorld()), routerData.getX(), routerData.getY(), routerData.getZ());
 			
-			if ((computerLocation.getWorld().equals(routerLocation.getWorld())) && (computerLocation.toVector().subtract(routerLocation.toVector()).lengthSquared() <= ConfigManager.antennaRange * routerData.getAntennas())) { // TODO: Replace two with the number of antennas router has
+			int range = ConfigManager.antennaRange * routerData.getAntennas();
+			if (range == 0) {
+				range = 5;
+			}
+			
+			if ((computerLocation.getWorld().equals(routerLocation.getWorld())) && (computerLocation.toVector().subtract(routerLocation.toVector()).lengthSquared() <= range)) { // TODO: Replace two with the number of antennas router has
 				if (routerData.getPassword().equals(password)) {					
 					return "RN_CONNECTED";
 				}
@@ -37,5 +43,27 @@ public class RednetHandler {
 				return "RN_OUT_OF_RANGE";
 		}
 		return "RN_NO_NETWORK";
+	}
+	
+	public static String send(int sendTo, String message, String SSID, int CID) {
+		ComputerData sendToCompData = CCMain.instance.getDatabase().find(ComputerData.class)
+				.where()
+				.eq("id", CID)
+			.findUnique();
+		
+		if (sendToCompData != null) {
+			ComputerThread sendToComp = CCMain.instance.ComputerThreads.get(Integer.toString(sendToCompData.getId()));
+			
+			if (sendToComp != null) {
+				// TODO: Put in checks to see if the SSID is connected to rednet, for now only worry about internal network!
+				if (sendToComp.connectedSSID().equals(SSID)) {
+					// Send messsage to the computer!
+					sendToComp.triggerEvent("rednet_receive", message);
+					return "RN_SEND_SUCCESSFUL";
+				}
+			}
+		}
+		
+		return "RN_DEST_NOT_FOUND";
 	}
 }
