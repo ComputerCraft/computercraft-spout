@@ -8,6 +8,7 @@ import org.getspout.spoutapi.material.MaterialData;
 
 import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.material.block.ComputerBlock;
+import net.robbytu.computercraft.material.block.RouterBlock;
 import net.robbytu.computercraft.material.block.WirelessComputerBlock;
 import net.robbytu.computercraft.material.item.WirelessAdapterItem;
 import net.robbytu.computercraft.material.item.WirelessAntennaItem;
@@ -26,6 +27,8 @@ public class Materials {
 	public static WirelessAdapterItem WirelessAdapterItem;
 	public static WirelessAntennaItem WirelessAntennaItem;
 	
+	public static RouterBlock RouterBlockGeneral;
+	
 	public Materials() {
 		ComputerBlockEast = new ComputerBlock(CCMain.instance, "ComputerBlockEast", false, 2);
 		ComputerBlockSouth = new ComputerBlock(CCMain.instance, "ComputerBlockSouth", false, 0);
@@ -39,6 +42,8 @@ public class Materials {
 		
 		WirelessAdapterItem = new WirelessAdapterItem(CCMain.instance);
 		WirelessAntennaItem = new WirelessAntennaItem(CCMain.instance);
+		
+		RouterBlockGeneral = new RouterBlock();
 		
 		registerRecipes();
 	}
@@ -82,8 +87,18 @@ public class Materials {
 		SpoutShapelessRecipe WirelessComputerBlockRecipe = new SpoutShapelessRecipe(WirelessComputerBlockRecipeResult);
 		
 		WirelessComputerBlockRecipe.addIngredient(1, ComputerBlockEast);
-		WirelessComputerBlockRecipe.addIngredient(1, WirelessAdapterItem); // TODO: Update this to the new block
+		WirelessComputerBlockRecipe.addIngredient(1, WirelessAdapterItem);
 		
 		SpoutManager.getMaterialManager().registerSpoutRecipe(WirelessComputerBlockRecipe);
+
+		// Router Block
+		SpoutItemStack RouterBlockRecipeResult = new SpoutItemStack(RouterBlockGeneral);
+		SpoutShapedRecipe RouterBlockRecipe = new SpoutShapedRecipe(RouterBlockRecipeResult);
+		
+		RouterBlockRecipe.shape("ABA", "ABA", "AAA");
+		RouterBlockRecipe.setIngredient('A', MaterialData.ironIngot);
+		RouterBlockRecipe.setIngredient('B', MaterialData.redstone);
+		
+		SpoutManager.getMaterialManager().registerSpoutRecipe(RouterBlockRecipe);
 	}
 }

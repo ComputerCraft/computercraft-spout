@@ -6,7 +6,7 @@ import org.getspout.spoutapi.material.item.GenericCustomItem;
 public class WirelessAdapterItem extends GenericCustomItem {
 
 	public WirelessAdapterItem(Plugin plugin) {
-		super(plugin, "Wireless Adapter", "http://robbytu.net/spout/computercraft/resources/computerblock.png");
+		super(plugin, "Wireless Adapter", "http://robbytu.net/spout/computercraft/resources/adapter.png");
 		
 	}
 }

@@ -12,7 +12,7 @@ public class WirelessComputerBlock extends ComputerBlock {
 
 	public WirelessComputerBlock(Plugin plugin, String name, boolean isOpaque, int face) {
 		super(plugin, name, isOpaque, face);
-		this.setName("WirelessComputer");
+		this.setName("Computer with Wireless Network Card");
 		
 		if (!name.equals("WirelessComputerBlockEast"))
 			setItemDrop(new SpoutItemStack(Materials.WirelessComputerBlockEast, 1));
@@ -27,25 +27,25 @@ public class WirelessComputerBlock extends ComputerBlock {
 			BlockDesign = new GenericCubeBlockDesign(
 					plugin,
 					new Texture(plugin, texture, 256, 256, 16),
-					new int[] { 2, 2, 2, 0, 2, 3 });
+					new int[] { 2, 3, 3, 0, 3, 2 });
 		}
 		else if(face == 1) {
 			BlockDesign = new GenericCubeBlockDesign(
 					plugin,
 					new Texture(plugin, texture, 256, 256, 16),
-					new int[] { 2, 0, 2, 2, 2, 3 });
+					new int[] { 2, 0, 3, 3, 3, 2 });
 		}
 		else if(face == 3) {
 			BlockDesign = new GenericCubeBlockDesign(
 					plugin,
 					new Texture(plugin, texture, 256, 256, 16),
-					new int[] { 2, 2, 2, 2, 0, 3 });
+					new int[] { 2, 3, 3, 3, 0, 2 });
 		}
 		else {
 			BlockDesign = new GenericCubeBlockDesign(
 					plugin,
 					new Texture(plugin, texture, 256, 256, 16),
-					new int[] { 2, 2, 0, 2, 2, 3 });
+					new int[] { 2, 3, 0, 3, 3, 2 });
 		}
 		
 		this.setBlockDesign(BlockDesign);
