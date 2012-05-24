@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.robbytu.computercraft.database.ComputerData;
+import net.robbytu.computercraft.database.RouterData;
 import net.robbytu.computercraft.listeners.ComputerBlockPlacementListener;
 import net.robbytu.computercraft.material.Materials;
 
@@ -88,6 +89,7 @@ public class CCMain extends JavaPlugin {
 		List<Class<?>> list = new ArrayList<Class<?>>();
 		
 		list.add(ComputerData.class);
+		list.add(RouterData.class);
 		
 		return list;
 	}
