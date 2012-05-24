@@ -16,9 +16,11 @@ public class ComputerBlockGUI {
 	private GenericButton sendButton;
 	public GenericTextField input;
 	public String inputBuffer;
+	public boolean buttonClicked;
 	
 	public ComputerBlockGUI(int computerID) {
 		this.inputBuffer = "";
+		this.buttonClicked = false;
 		
 		this.bg = new GenericTexture("http://robbytu.net/spout/computercraft/resources/GUIBackground.png");
 		this.bg.setX(40).setY(1);
@@ -71,10 +73,8 @@ public class ComputerBlockGUI {
 				}
 				else {
 					int lastColorIndex = tempText.lastIndexOf("¤", maxOutputLength);
-					Bukkit.getLogger().info("" + lastColorIndex);
 					if (lastColorIndex > -1) {
 						lastColor = tempText.substring(lastColorIndex, lastColorIndex + 2);
-						Bukkit.getLogger().info(lastColor + " this is the last color");
 					}
 					newOutput1 += tempText.substring(0, maxOutputLength) + "\n" + lastColor;
 					tempText = tempText.substring(maxOutputLength);
@@ -117,6 +117,7 @@ public class ComputerBlockGUI {
 	}
 	
 	public void sendInputToScript() {
+		this.buttonClicked = true;
 		this.inputBuffer = this.input.getText();
 		this.input.setText("");
 	}

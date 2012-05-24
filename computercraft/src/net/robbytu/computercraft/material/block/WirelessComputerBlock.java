@@ -8,10 +8,10 @@ import org.getspout.spoutapi.block.design.GenericCubeBlockDesign;
 import org.getspout.spoutapi.block.design.Texture;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 
-public class WirelessComputerBlock extends ComputerBlock {
+public class WirelessComputerBlock extends BaseComputerBlock {
 
 	public WirelessComputerBlock(Plugin plugin, String name, boolean isOpaque, int face) {
-		super(plugin, name, isOpaque, face);
+		super(plugin, name, "http://robbytu.net/spout/computercraft/resources/computerblock.png", isOpaque, face);
 		this.setName("Computer with Wireless Network Card");
 		
 		if (!name.equals("WirelessComputerBlockEast"))
@@ -20,7 +20,8 @@ public class WirelessComputerBlock extends ComputerBlock {
 		setupDesign(plugin, face, "http://robbytu.net/spout/computercraft/resources/computerblock.png");
 	}
 	
-	private void setupDesign(Plugin plugin, int face, String texture) {
+	@Override
+	protected void setupDesign(Plugin plugin, int face, String texture) {
 		GenericCubeBlockDesign BlockDesign;
 		
 		if(face == 0) {
