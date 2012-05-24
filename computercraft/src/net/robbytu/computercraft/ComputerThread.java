@@ -20,7 +20,6 @@ import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
 import net.robbytu.computercraft.material.block.ComputerBlock;
 import net.robbytu.computercraft.util.BlockManager;
-import net.robbytu.computercraft.util.LuaHelper;
 import net.robbytu.computercraft.util.ScriptHelper;
 
 public class ComputerThread {

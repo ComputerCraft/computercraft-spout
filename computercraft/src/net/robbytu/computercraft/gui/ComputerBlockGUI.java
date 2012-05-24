@@ -2,6 +2,7 @@ package net.robbytu.computercraft.gui;
 
 import net.robbytu.computercraft.CCMain;
 
+import org.bukkit.Bukkit;
 import org.getspout.spoutapi.gui.GenericButton;
 import org.getspout.spoutapi.gui.GenericPopup;
 import org.getspout.spoutapi.gui.GenericTextField;
@@ -63,12 +64,19 @@ public class ComputerBlockGUI {
 			}
 			
 			while (tempText.length() > 0) {
+				String lastColor = "";
 				if (tempText.length() <= maxOutputLength) {
 					newOutput1 += tempText;
 					break;
 				}
 				else {
-					newOutput1 += tempText.substring(0, maxOutputLength) + "\n";
+					int lastColorIndex = tempText.lastIndexOf("¤", maxOutputLength);
+					Bukkit.getLogger().info("" + lastColorIndex);
+					if (lastColorIndex > -1) {
+						lastColor = tempText.substring(lastColorIndex, lastColorIndex + 2);
+						Bukkit.getLogger().info(lastColor + " this is the last color");
+					}
+					newOutput1 += tempText.substring(0, maxOutputLength) + "\n" + lastColor;
 					tempText = tempText.substring(maxOutputLength);
 				}
 			}
