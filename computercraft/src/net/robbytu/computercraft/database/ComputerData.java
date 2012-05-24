@@ -27,6 +27,10 @@ public class ComputerData {
 	
 	private boolean wireless = false;
 	
+	private String networkName;
+	
+	private String networkPassword;
+	
 	public int getId() {
 		return id;
 	}
@@ -73,5 +77,21 @@ public class ComputerData {
 	
 	public void setWireless(boolean Wireless) {
 		this.wireless = Wireless;
+	}
+	
+	public String getNetworkName() {
+		return networkName;
+	}
+	
+	public void setNetworkName(String networkName) {
+		this.networkName = networkName;
+	}
+	
+	public String getNetworkPassword() {
+		return networkPassword;
+	}
+	
+	public void setNetworkPassword(String networkPassword) {
+		this.networkPassword = networkPassword;
 	}
 }
