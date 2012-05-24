@@ -48,7 +48,7 @@ public class RednetHandler {
 	public static String send(int sendTo, String message, String SSID, int CID) {
 		ComputerData sendToCompData = CCMain.instance.getDatabase().find(ComputerData.class)
 				.where()
-				.eq("id", CID)
+				.eq("id", sendTo)
 			.findUnique();
 		
 		if (sendToCompData != null) {

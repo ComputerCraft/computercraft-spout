@@ -144,6 +144,10 @@ eh = function(s)
 	print(s)
 end
 
+ev = function(eventId, message)
+	print(eventId .. " - " .. message)
+end
+
 boot = function()
 	_try_boot_custom = false
 	_booting_custom = false
@@ -162,6 +166,8 @@ boot = function()
 	end
 	
 	if _booting_custom == false then
+		event.registerListener("rednet_receive", "ev")
+	
 		print(_os .. "\n")
 		if _show_motd then
 			motd()
