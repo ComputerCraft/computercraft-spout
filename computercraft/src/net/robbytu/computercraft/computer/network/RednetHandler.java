@@ -24,10 +24,18 @@ public class RednetHandler {
 		
 		if (computerLocation.toVector().subtract(routerLocation.toVector()).lengthSquared() <= ConfigManager.maxRouterDistance) {
 			// Router within distance!
+			if ("NETWORKPASSWORDHERE".equals(networkPassword)) {
+				data.setNetworkName("NETWORKNAMEHERE");
+				data.setNetworkPassword("NETWORKPASSWORDHERE");
+				CCMain.instance.getDatabase().save(data);
+				return "RN_CONNECTED";
+			}
+			else
+				return "RN_INVALID_PASSWORD";
 		}
 		else
 			return "RN_OUT_OF_RANGE";
 		
-		return "RN_NO_NETWORK";
+		//return "RN_NO_NETWORK"; //TODO: Uncomment once it actually checks for the network name
 	}
 }
