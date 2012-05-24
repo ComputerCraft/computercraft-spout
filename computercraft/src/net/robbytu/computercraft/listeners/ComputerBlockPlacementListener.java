@@ -1,8 +1,7 @@
 package net.robbytu.computercraft.listeners;
 
 import net.robbytu.computercraft.material.Materials;
-import net.robbytu.computercraft.material.block.ComputerBlock;
-
+import net.robbytu.computercraft.material.block.BaseComputerBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -21,7 +20,7 @@ public class ComputerBlockPlacementListener implements Listener {
 			// Many thanks to Jukebukkit's source (by Thedudeguy),
 			// cause I didn't really know how to make a block face the player :)
 			
-			ComputerBlock NewBlock;
+			BaseComputerBlock NewBlock;
 			
 			double yaw = (event.getPlayer().getLocation().getYaw() - 90) % 360;
 			if(yaw < 0) yaw += 360.0;
