@@ -95,8 +95,8 @@ public class FileManager {
 		return null;
 	}
 	
-	public static List<String> getFileAsStringList(String path, String name, int CID) {
-		List<String> stringList = new ArrayList<String>();
+	public static String getFileAsString(String path, String name, int CID) {
+		StringBuilder strFile = new StringBuilder();
 		File file = getFile(path, name, CID);
 		
 		if (file != null) {
@@ -106,11 +106,13 @@ public class FileManager {
 				String output = reader.readLine();
 
 				while(output != null) {
-					stringList.add(output);
+					if (!strFile.toString().isEmpty())
+						strFile.append("/n");
+					strFile.append(output);
 					output = reader.readLine();
 				}
 				
-				return stringList;
+				return strFile.toString();
 			} 
 			catch (FileNotFoundException e) {	}
 			catch (IOException e) { }

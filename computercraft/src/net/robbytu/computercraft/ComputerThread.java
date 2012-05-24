@@ -94,7 +94,9 @@ public class ComputerThread {
 		// Default functions
 		lua.set("print", new OneArgFunction() {
             public LuaValue call(LuaValue val) {
-            	gui.addEntry(val.toString());
+            	String[] splitString = val.toString().split("/n");
+            	for (String str : splitString)
+            		gui.addEntry(str);
 
                 return LuaValue.NIL;
             }
@@ -274,10 +276,8 @@ public class ComputerThread {
 		
 		io.set("getFile", new TwoArgFunction() {
 			public LuaValue call(LuaValue val, LuaValue val2) {
-				List<String> stringList = FileManager.getFileAsStringList(val.toString(), val2.toString(), CID);
-				if (stringList != null) 
-					return LuaHelper.stringListToLuaTable(stringList);
-				return LuaValue.NIL;
+				String file = FileManager.getFileAsString(val.toString(), val2.toString(), CID);
+				return LuaValue.valueOf(file);
 			}
 		});
 		lua.set("io", io);

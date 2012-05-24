@@ -88,9 +88,7 @@ shell = function()
 		if _fileContents == nil then
 			print(color.byString("RED") .. "Something went wrong!")
 		else
-			for i = 0,table.getn(_fileContents),1 do
-				print(_fileContents[i])
-			end
+			print(_fileContents)
 		end
 	else
 		print(color.byString("RED") .. "Command not found.")
