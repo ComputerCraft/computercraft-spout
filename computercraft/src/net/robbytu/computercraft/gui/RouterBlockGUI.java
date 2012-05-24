@@ -4,6 +4,7 @@ import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.database.RouterData;
 
 import org.getspout.spoutapi.gui.GenericPopup;
+import org.getspout.spoutapi.gui.GenericSlot;
 import org.getspout.spoutapi.gui.GenericTextField;
 import org.getspout.spoutapi.gui.GenericLabel;
 import org.getspout.spoutapi.gui.GenericTexture;
@@ -16,7 +17,8 @@ public class RouterBlockGUI {
 	private GenericTexture bg;
 	
 	private GenericTextField SSID;
-	private GenericTextField Password;
+	private GenericTextField password;
+	private GenericLabel antennas;
 	
 	private RouterData data;
 	
@@ -56,17 +58,27 @@ public class RouterBlockGUI {
 		password_label.setText("Password:");
 		password_label.setPriority(RenderPriority.High);
 		
-		this.Password = new GenericTextField();
-		Password.setX(154).setY(62);
-		Password.setWidth(220).setHeight(15);
-		Password.setPlaceholder("¤7Optional");
-		Password.setText(this.data.getPassword());
-		Password.setPasswordField(true);
-		Password.setMaximumLines(1);
-		Password.setPriority(RenderPriority.Low);
+		this.password = new GenericTextField();
+		password.setX(154).setY(62);
+		password.setWidth(220).setHeight(15);
+		password.setPlaceholder("¤7Optional");
+		password.setText(this.data.getPassword());
+		password.setPasswordField(true);
+		password.setMaximumLines(1);
+		password.setPriority(RenderPriority.Low);
+
+		GenericLabel antenna_label = new GenericLabel();
+		antenna_label.setX(57).setY(86);
+		antenna_label.setText("Antennas:");
+		antenna_label.setPriority(RenderPriority.High);
+
+		this.antennas = new GenericLabel();
+		antennas.setX(154).setY(86);
+		antennas.setText(Integer.toString(data.getAntennas()));
+		antennas.setPriority(RenderPriority.Low);
 		
 		GenericPopup popup = new GenericPopup();
 		player.getMainScreen().attachPopupScreen(popup);
-		popup.attachWidgets(CCMain.instance, this.bg, conf_label, ssid_label, this.SSID, password_label, this.Password);
+		popup.attachWidgets(CCMain.instance, this.bg, conf_label, ssid_label, this.SSID, password_label, this.password, antenna_label, this.antennas);
 	}
 }
