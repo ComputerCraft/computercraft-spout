@@ -99,19 +99,6 @@ public class ComputerBlockGUI {
 		else
 			newOutput2 = newOutput1;
 		
-		
-		/*if(newOutput1.split("\n").length >= 16) {
-			for(int i = 1; i < 16; i++) {
-				if(newOutput2 != "") {
-					newOutput2 = newOutput2 + "\n" + newOutput1.split("\n")[i];
-				}
-				else newOutput2 = newOutput2 + newOutput1.split("\n")[i];
-			}
-		}
-		else {
-			newOutput2 = newOutput1;
-		}*/
-		
 		// End of shitty work-around :)
 		
 		this.output.setText(newOutput2);

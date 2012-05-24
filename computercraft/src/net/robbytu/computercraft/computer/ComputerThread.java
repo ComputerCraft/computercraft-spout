@@ -1,4 +1,4 @@
-package net.robbytu.computercraft;
+package net.robbytu.computercraft.computer;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +16,7 @@ import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
+import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
 import net.robbytu.computercraft.material.block.ComputerBlock;

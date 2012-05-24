@@ -1,10 +1,12 @@
-package net.robbytu.computercraft;
+package net.robbytu.computercraft.computer;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
+import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.database.ComputerData;
 
 public class FileManager {

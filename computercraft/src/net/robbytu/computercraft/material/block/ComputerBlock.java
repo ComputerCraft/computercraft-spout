@@ -2,9 +2,9 @@ package net.robbytu.computercraft.material.block;
 
 import java.io.File;
 import net.robbytu.computercraft.CCMain;
-import net.robbytu.computercraft.ComputerTask;
-import net.robbytu.computercraft.ComputerThread;
-import net.robbytu.computercraft.FileManager;
+import net.robbytu.computercraft.computer.ComputerTask;
+import net.robbytu.computercraft.computer.ComputerThread;
+import net.robbytu.computercraft.computer.FileManager;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
 import net.robbytu.computercraft.material.Materials;
