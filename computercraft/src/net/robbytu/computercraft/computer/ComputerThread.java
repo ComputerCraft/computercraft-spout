@@ -1,4 +1,4 @@
-package net.robbytu.computercraft;
+package net.robbytu.computercraft.computer;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +16,8 @@ import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
+import net.robbytu.computercraft.CCMain;
+import net.robbytu.computercraft.computer.network.RednetHandler;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
 import net.robbytu.computercraft.material.block.ComputerBlock;
@@ -93,7 +95,9 @@ public class ComputerThread {
 		// Default functions
 		lua.set("print", new OneArgFunction() {
             public LuaValue call(LuaValue val) {
-            	gui.addEntry(val.toString());
+            	String[] splitString = val.toString().split("/n");
+            	for (String str : splitString)
+            		gui.addEntry(str);
 
                 return LuaValue.NIL;
             }
@@ -264,6 +268,19 @@ public class ComputerThread {
 				return LuaValue.valueOf(FileManager.fileExists(val.toString(), val2.toString(), CID));
 			}
 		});
+		
+		io.set("mkFile", new TwoArgFunction() {
+			public LuaValue call(LuaValue val, LuaValue val2) {
+				return LuaValue.valueOf(FileManager.mkFile(val.toString(), val2.toString(), CID));
+			}
+		});
+		
+		io.set("getFile", new TwoArgFunction() {
+			public LuaValue call(LuaValue val, LuaValue val2) {
+				String file = FileManager.getFileAsString(val.toString(), val2.toString(), CID);
+				return LuaValue.valueOf(file);
+			}
+		});
 		lua.set("io", io);
 		
 		// Events API
@@ -391,6 +408,21 @@ public class ComputerThread {
 			}
 		});
 		lua.set("redstone", redstone);
+		
+		// Network API - This is for both internal and world-wide networking
+		LuaTable rednet = new LuaTable();
+		rednet.set("scan", new OneArgFunction() {
+			public LuaValue call(LuaValue val1) {
+				
+				return LuaValue.NIL;
+			}
+		});
+		
+		rednet.set("connect", new TwoArgFunction() {
+			public LuaValue call(LuaValue val1, LuaValue val2) {
+				return LuaValue.valueOf(RednetHandler.connect(val1.toString(), val2.toString(), CID));
+			}
+		});
 		
 		return lua;
 	}

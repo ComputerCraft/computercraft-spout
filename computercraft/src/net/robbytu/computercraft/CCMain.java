@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.robbytu.computercraft.computer.ComputerThread;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.database.RouterData;
 import net.robbytu.computercraft.listeners.ComputerBlockPlacementListener;
 import net.robbytu.computercraft.material.Materials;
+import net.robbytu.computercraft.util.ConfigManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -59,6 +61,9 @@ public class CCMain extends JavaPlugin {
 				e.printStackTrace();
 			}
 		}
+		
+		// Load configs
+		ConfigManager.loadConfig(getConfig());
 		
 		// Fill in the static variables
 		instance = this;

@@ -1,7 +1,12 @@
-package net.robbytu.computercraft;
+package net.robbytu.computercraft.computer;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
+import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.database.ComputerData;
 
 public class FileManager {
@@ -26,7 +31,7 @@ public class FileManager {
 		}
 	}
 	
-	public static String getDir(String path, int CID) {
+	private static String getValidPath(String path, int CID) {
 		String[] split = path.split("/");
 		String newPath = computersDir + "/" + CID;
 		
@@ -42,11 +47,20 @@ public class FileManager {
 			}
 		}
 		
-		newPath += "/";
-		
 		if (newPath.startsWith(computersDir.getAbsolutePath() + "/" + CID)) {
-			File file = new File(computersDir, CID + "/" + path); 
+			return newPath;
+		}
+		return "";
+	}
+	
+	public static String getDir(String path, int CID) {
+		String newPath = getValidPath(path, CID);
+		
+		if (!newPath.equals("")) {
+			newPath += "/";
 			
+			File file = new File(computersDir, CID + "/" + path); 
+				
 			if (file.isDirectory()) {
 				return newPath.replace(computersDir.getAbsolutePath() + "/" + CID, "");
 			}
@@ -70,16 +84,59 @@ public class FileManager {
 	}
 	
 	public static File getFile(String path, String name, int CID) {
-		if (getDir(path + "/" + name, CID) != "") {
+		String newPath = getValidPath(path + "/" + name, CID);
+		
+		if (!newPath.equals("")) {
 			File file = new File(computersDir, CID + "/" + path + "/" + name); // Potentially dangerous
-			if (file.exists())
+			if (file.exists()) 
 				return file;
-			}
+		}
+		return null;
+	}
+	
+	public static String getFileAsString(String path, String name, int CID) {
+		StringBuilder strFile = new StringBuilder();
+		File file = getFile(path, name, CID);
+		
+		if (file != null) {
+			try {
+				BufferedReader reader = new BufferedReader(new FileReader(file));
+				
+				String output = reader.readLine();
+
+				while(output != null) {
+					if (!strFile.toString().isEmpty())
+						strFile.append("/n");
+					strFile.append(output);
+					output = reader.readLine();
+				}
+				
+				return strFile.toString();
+			} 
+			catch (FileNotFoundException e) {	}
+			catch (IOException e) { }
+		}
+		
 		return null;
 	}
 	
 	public static boolean fileExists(String path, String name, int CID) {
 		return (getFile(path, name, CID) != null);
+	}
+	
+	public static boolean mkFile(String path, String name, int CID) {
+		String newPath = getValidPath(path + "/" + name, CID);
+		if (!newPath.equals("")) {
+			File newFile = new File(newPath);
+			if (!newFile.exists()) {
+				try {
+					return newFile.createNewFile();
+				} 
+				catch (IOException e) { }
+			}
+		}
+		
+		return false;
 	}
 	
 	public static void printList(String path, int CID) {

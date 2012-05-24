@@ -76,6 +76,20 @@ shell = function()
 		if run(_curdir, string.sub(input, 5)) then
 			_exit_shell = true
 		end
+	elseif string.sub(input, 0, 7) == "MKFILE " then
+		if io.mkFile(_curdir, string.sub(input, 8)) then
+			print(color.byString("GREEN") .. "File was created!")
+		else
+			print(color.byString("RED") .. "Something went wrong!")
+		end
+	elseif string.sub(input, 0, 9) == "VIEWFILE " then
+		_fileContents = io.getFile(_curdir, string.sub(input, 10))
+	
+		if _fileContents == nil then
+			print(color.byString("RED") .. "Something went wrong!")
+		else
+			print(_fileContents)
+		end
 	else
 		print(color.byString("RED") .. "Command not found.")
 	end

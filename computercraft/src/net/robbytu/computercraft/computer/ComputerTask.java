@@ -1,4 +1,4 @@
-package net.robbytu.computercraft;
+package net.robbytu.computercraft.computer;
 
 import org.luaj.vm2.LuaTable;
 
