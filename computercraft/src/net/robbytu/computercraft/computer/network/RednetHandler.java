@@ -2,6 +2,7 @@ package net.robbytu.computercraft.computer.network;
 
 import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.database.ComputerData;
+import net.robbytu.computercraft.database.RouterData;
 import net.robbytu.computercraft.util.ConfigManager;
 
 import org.bukkit.Bukkit;
@@ -10,32 +11,31 @@ import org.bukkit.Location;
 public class RednetHandler {
 	public static String connect(String SSID, String password, int CID) {
 		// Step 1: Check for network
-		
-		// Step 2: Make sure the network is in range!
-		ComputerData data = CCMain.instance.getDatabase().find(ComputerData.class)
+		RouterData routerData = CCMain.instance.getDatabase().find(RouterData.class)
 				.where()
-					.eq("id", CID)
+					.eq("SSID", SSID)
 				.findUnique();
-		Location computerLocation = new Location(Bukkit.getWorld(data.getWorld()), data.getX(), data.getY(), data.getZ());
+		if (routerData != null) {
 		
-		// TODO: Make this actually work once Networks actually have names!
-		Location routerLocation = computerLocation;
-		routerLocation.setX(routerLocation.getX() + 30);
-		
-		if (computerLocation.toVector().subtract(routerLocation.toVector()).lengthSquared() <= ConfigManager.antennaRange * 2) { // TODO: Replace two with the number of antennas router has
-			// Router within distance!
-			if ("NETWORKPASSWORDHERE".equals(password)) {
-				data.setSSID("SSID");
-				data.setNetworkPassword("PASSWORD");
-				CCMain.instance.getDatabase().save(data);
-				return "RN_CONNECTED";
+			// Step 2: Make sure the network is in range!
+			ComputerData computerData = CCMain.instance.getDatabase().find(ComputerData.class)
+					.where()
+						.eq("id", CID)
+					.findUnique();
+			
+			Location computerLocation = new Location(Bukkit.getWorld(computerData.getWorld()), computerData.getX(), computerData.getY(), computerData.getZ());
+			Location routerLocation = new Location(Bukkit.getWorld(routerData.getWorld()), routerData.getX(), routerData.getY(), routerData.getZ());
+			
+			if ((computerLocation.getWorld().equals(routerLocation.getWorld())) && (computerLocation.toVector().subtract(routerLocation.toVector()).lengthSquared() <= ConfigManager.antennaRange * routerData.getAntennas())) { // TODO: Replace two with the number of antennas router has
+				if (routerData.getPassword().equals(password)) {					
+					return "RN_CONNECTED";
+				}
+				else
+					return "RN_INVALID_PASSWORD";
 			}
 			else
-				return "RN_INVALID_PASSWORD";
+				return "RN_OUT_OF_RANGE";
 		}
-		else
-			return "RN_OUT_OF_RANGE";
-		
-		//return "RN_NO_NETWORK"; //TODO: Uncomment once it actually checks for the network name
+		return "RN_NO_NETWORK";
 	}
 }

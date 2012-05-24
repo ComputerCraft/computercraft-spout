@@ -420,7 +420,13 @@ public class ComputerThread {
 		
 		rednet.set("connect", new TwoArgFunction() {
 			public LuaValue call(LuaValue val1, LuaValue val2) {
-				return LuaValue.valueOf(RednetHandler.connect(val1.toString(), val2.toString(), CID));
+				String ret = RednetHandler.connect(val1.toString(), val2.toString(), CID);
+				
+				if (ret.equals("RN_CONNECTED")) {
+					// Store the connection here!
+				}
+				
+				return LuaValue.valueOf(ret);
 			}
 		});
 		

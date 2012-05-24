@@ -27,10 +27,6 @@ public class ComputerData {
 	
 	private boolean wireless = false;
 	
-	private String SSID;
-	
-	private String networkPassword;
-	
 	public int getId() {
 		return id;
 	}
@@ -77,21 +73,5 @@ public class ComputerData {
 	
 	public void setWireless(boolean Wireless) {
 		this.wireless = Wireless;
-	}
-	
-	public String getSSID() {
-		return SSID;
-	}
-	
-	public void setSSID(String SSID) {
-		this.SSID = SSID;
-	}
-	
-	public String getNetworkPassword() {
-		return networkPassword;
-	}
-	
-	public void setNetworkPassword(String networkPassword) {
-		this.networkPassword = networkPassword;
 	}
 }
