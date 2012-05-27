@@ -64,6 +64,7 @@ public class CCMain extends JavaPlugin {
 		
 		// Load configs
 		ConfigManager.loadConfig(getConfig());
+		saveConfig();
 		
 		// Fill in the static variables
 		instance = this;

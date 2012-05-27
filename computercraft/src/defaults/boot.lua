@@ -131,7 +131,14 @@ luaConsole = function()
 			print(color.byString("WHITE") .. " ** Lua console exiting...")
 			con = false
 		else
-			_tc = loadstring(input)
+			new_input = ""
+			if string.sub(input, 0, 5) == "PRINT" then 
+				new_input = input
+			else
+				new_input = "print(" .. input .. ")"
+			end
+		
+			_tc = loadstring(new_input)
 			xpcall(_tc, eh)
 		end
 	end
