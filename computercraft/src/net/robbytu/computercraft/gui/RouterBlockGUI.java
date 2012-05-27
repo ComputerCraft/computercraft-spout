@@ -4,7 +4,6 @@ import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.database.RouterData;
 
 import org.getspout.spoutapi.gui.GenericPopup;
-import org.getspout.spoutapi.gui.GenericSlot;
 import org.getspout.spoutapi.gui.GenericTextField;
 import org.getspout.spoutapi.gui.GenericLabel;
 import org.getspout.spoutapi.gui.GenericTexture;
@@ -77,8 +76,24 @@ public class RouterBlockGUI {
 		antennas.setText(Integer.toString(data.getAntennas()));
 		antennas.setPriority(RenderPriority.Low);
 		
+		AddAntennaButton plus = new AddAntennaButton(this, player);
+		plus.setX(154+25).setY(82);
+		
+		MinAntennaButton min = new MinAntennaButton(this, player);
+		min.setX(154+25+20).setY(82);
+		
 		GenericPopup popup = new GenericPopup();
 		player.getMainScreen().attachPopupScreen(popup);
-		popup.attachWidgets(CCMain.instance, this.bg, conf_label, ssid_label, this.SSID, password_label, this.password, antenna_label, this.antennas);
+		popup.attachWidgets(CCMain.instance, this.bg, conf_label, ssid_label, this.SSID, password_label, this.password, antenna_label, this.antennas, plus, min);
+	}
+
+	public int getAmountOfAntennas() {
+		return this.data.getAntennas();
+	}
+	
+	public void setAmountOfAntennas(int amount) {
+		this.data.setAntennas(amount);
+		this.antennas.setText(Integer.toString(amount)).setDirty(true);
+		CCMain.instance.getDatabase().save(this.data);
 	}
 }
