@@ -1,8 +1,11 @@
 package net.robbytu.computercraft.gui;
 
+import java.util.HashMap;
+
 import net.robbytu.computercraft.material.Materials;
 import net.robbytu.computercraft.util.ConfigManager;
 
+import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.event.screen.ButtonClickEvent;
 import org.getspout.spoutapi.gui.GenericButton;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
@@ -23,11 +26,9 @@ public class AddAntennaButton extends GenericButton {
 	public void onButtonClick(ButtonClickEvent event) {
 		if(this.gui.getAmountOfAntennas() < ConfigManager.antennaRange) {
 			SpoutItemStack itemStack = new SpoutItemStack(Materials.WirelessAntennaItem, 1);
-			itemStack.setAmount(1);
-	
-			if(this.player.getInventory().contains(itemStack, 1)) {
-				this.player.getInventory().removeItem(itemStack);
-				
+			HashMap<Integer, ItemStack> result = this.player.getInventory().removeItem(itemStack);
+			
+			if(result.isEmpty()) {
 				this.gui.setAmountOfAntennas(gui.getAmountOfAntennas() + 1);
 			}
 			else {
