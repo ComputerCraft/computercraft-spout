@@ -82,7 +82,7 @@ shell = function()
 	elseif string.sub(input, 0, 3) == "RM " then
 		rm(string.sub(input, 4))
 	elseif input == "LUA" or input == "CONSOLE" then
-		luaConsole()
+		
 	elseif string.sub(input, 0, 6) == "MKDIR " then
 		if io.mkdir(_curdir, string.sub(input, 7)) then
 			print(color.byString("GREEN") .. "Directory was created!")
