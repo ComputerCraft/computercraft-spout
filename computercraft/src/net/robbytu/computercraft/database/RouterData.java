@@ -81,6 +81,7 @@ public class RouterData {
 	}
 	
 	public String getPassword() {
+		if(password == null) return "";
 		return password;
 	}
 	
