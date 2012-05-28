@@ -21,8 +21,11 @@ public class RouterBlockGUI {
 	
 	private RouterData data;
 	
+	private SpoutPlayer player;
+	
 	public RouterBlockGUI(int routerID, SpoutPlayer player) {
 		this.routerID = routerID;
+		this.player = player;
 		
 		this.data = CCMain.instance.getDatabase().find(RouterData.class)
 				.where()
@@ -82,9 +85,12 @@ public class RouterBlockGUI {
 		MinAntennaButton min = new MinAntennaButton(this, player);
 		min.setX(154+25+20).setY(82);
 		
+		RouterApplyButton apply = new RouterApplyButton(this, player);
+		apply.setX(154).setY(82+20);
+		
 		GenericPopup popup = new GenericPopup();
 		player.getMainScreen().attachPopupScreen(popup);
-		popup.attachWidgets(CCMain.instance, this.bg, conf_label, ssid_label, this.SSID, password_label, this.password, antenna_label, this.antennas, plus, min);
+		popup.attachWidgets(CCMain.instance, this.bg, conf_label, ssid_label, this.SSID, password_label, this.password, antenna_label, this.antennas, plus, min, apply);
 	}
 
 	public int getAmountOfAntennas() {
@@ -94,6 +100,15 @@ public class RouterBlockGUI {
 	public void setAmountOfAntennas(int amount) {
 		this.data.setAntennas(amount);
 		this.antennas.setText(Integer.toString(amount)).setDirty(true);
+		CCMain.instance.getDatabase().save(this.data);
+	}
+
+	public void applyChanges() {
+		if(this.SSID.getText().isEmpty()) this.player.sendMessage("¤4SSID was not applied: it was empty");
+		else this.data.setSSID(SSID.getText());
+		
+		this.data.setPassword(password.getText());
+		
 		CCMain.instance.getDatabase().save(this.data);
 	}
 }
