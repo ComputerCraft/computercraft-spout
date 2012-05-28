@@ -138,8 +138,22 @@ luaConsole = function()
 				new_input = "print(" .. input .. ")"
 			end
 		
-			_tc = loadstring(new_input)
-			xpcall(_tc, eh)
+			
+			--------------------------------------------
+			--- RED-109                              ---
+			---                                      ---
+			--- This is a shitty work-around for a   ---
+			--- shitty bug that we'll fix in         ---
+			--- version 0.0.3. Please do not use     ---
+			--- the xpcall() function!               ---
+			---                                      ---
+			--- NOTE: This loadstring()() thing      ---
+			--- doesn't report any errors, just      ---
+			--- outputs/returns!!                    ---
+			--------------------------------------------
+			loadstring(new_input)()
+			 
+			--- xpcall(_tc, eh)
 		end
 	end
 end
