@@ -156,8 +156,8 @@ public class ComputerThread {
 									lua.get("loadstring").call(LuaValue.valueOf(script)).call();
 								}
 								catch(LuaError ex) {
-									lua.get("print").call(LuaValue.valueOf("¤c" + ex.getMessage()));
-									lua.get("print").call(LuaValue.valueOf("¤7Script Failed."));
+									lua.get("print").call(LuaValue.valueOf("\u00A7c" + ex.getMessage()));
+									lua.get("print").call(LuaValue.valueOf("\u00A77Script Failed."));
 								}
 							}
 						});
@@ -166,12 +166,12 @@ public class ComputerThread {
 						
 						return LuaValue.TRUE;						
 					} catch (IOException e) {
-						lua.get("print").call(LuaValue.valueOf("¤7File unable to start!"));
+						lua.get("print").call(LuaValue.valueOf("\u00A77File unable to start!"));
 					}
 
 					return LuaValue.FALSE;
 				}
-				lua.get("print").call(LuaValue.valueOf("¤7File not found!"));
+				lua.get("print").call(LuaValue.valueOf("\u00A77File not found!"));
 				return LuaValue.FALSE;
 			}
 		});
@@ -181,23 +181,23 @@ public class ComputerThread {
 		color.set("byString", new OneArgFunction() {
 			public LuaValue call(LuaValue val) {
 				String color = val.toString().toUpperCase();
-				LuaValue toReturn = LuaValue.valueOf("¤f");
+				LuaValue toReturn = LuaValue.valueOf("\u00A7f");
 
-				if(color.equals("BLACK")) toReturn = LuaValue.valueOf("¤0");
-				if(color.equals("DARK_BLUE") || color.equals("DARKBLUE")) toReturn = LuaValue.valueOf("¤1");
-				if(color.equals("DARK_GREEN") || color.equals("DARKGREEN")) toReturn = LuaValue.valueOf("¤2");
-				if(color.equals("DARK_AQUA") || color.equals("DARKAQUA")) toReturn = LuaValue.valueOf("¤3");
-				if(color.equals("DARK_RED") || color.equals("DARKRED")) toReturn = LuaValue.valueOf("¤4");
-				if(color.equals("DARK_PURPLE") || color.equals("DARKPURPLE")) toReturn = LuaValue.valueOf("¤5");
-				if(color.equals("GOLD")) toReturn = LuaValue.valueOf("¤6");
-				if(color.equals("GRAY")) toReturn = LuaValue.valueOf("¤7");
-				if(color.equals("DARK_GRAY") || color.equals("DARKGRAY")) toReturn = LuaValue.valueOf("¤8");
-				if(color.equals("BLUE")) toReturn = LuaValue.valueOf("¤9");
-				if(color.equals("GREEN")) toReturn = LuaValue.valueOf("¤a");
-				if(color.equals("AQUA")) toReturn = LuaValue.valueOf("¤b");
-				if(color.equals("RED")) toReturn = LuaValue.valueOf("¤c");
-				if(color.equals("PURPLE")) toReturn = LuaValue.valueOf("¤d");
-				if(color.equals("YELLOW")) toReturn = LuaValue.valueOf("¤e");
+				if(color.equals("BLACK")) toReturn = LuaValue.valueOf("\u00A70");
+				if(color.equals("DARK_BLUE") || color.equals("DARKBLUE")) toReturn = LuaValue.valueOf("\u00A71");
+				if(color.equals("DARK_GREEN") || color.equals("DARKGREEN")) toReturn = LuaValue.valueOf("\u00A72");
+				if(color.equals("DARK_AQUA") || color.equals("DARKAQUA")) toReturn = LuaValue.valueOf("\u00A73");
+				if(color.equals("DARK_RED") || color.equals("DARKRED")) toReturn = LuaValue.valueOf("\u00A74");
+				if(color.equals("DARK_PURPLE") || color.equals("DARKPURPLE")) toReturn = LuaValue.valueOf("\u00A75");
+				if(color.equals("GOLD")) toReturn = LuaValue.valueOf("\u00A76");
+				if(color.equals("GRAY")) toReturn = LuaValue.valueOf("\u00A77");
+				if(color.equals("DARK_GRAY") || color.equals("DARKGRAY")) toReturn = LuaValue.valueOf("\u00A78");
+				if(color.equals("BLUE")) toReturn = LuaValue.valueOf("\u00A79");
+				if(color.equals("GREEN")) toReturn = LuaValue.valueOf("\u00A7a");
+				if(color.equals("AQUA")) toReturn = LuaValue.valueOf("\u00A7b");
+				if(color.equals("RED")) toReturn = LuaValue.valueOf("\u00A7c");
+				if(color.equals("PURPLE")) toReturn = LuaValue.valueOf("\u00A7d");
+				if(color.equals("YELLOW")) toReturn = LuaValue.valueOf("\u00A7e");
 				
 				return toReturn;
 			}
@@ -216,7 +216,7 @@ public class ComputerThread {
 		
 		term.set("setInputTip", new OneArgFunction() {
 			public LuaValue call(LuaValue val) {
-				gui.input.setPlaceholder("¤8" + val.toString());
+				gui.input.setPlaceholder("\u00A78" + val.toString());
 				
 				return LuaValue.NIL;
 			}

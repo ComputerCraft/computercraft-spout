@@ -32,11 +32,11 @@ public class AddAntennaButton extends GenericButton {
 				this.gui.setAmountOfAntennas(gui.getAmountOfAntennas() + 1);
 			}
 			else {
-				player.sendMessage("¤4You haven't got any spare wireless antennas left in your inventory!");
+				player.sendMessage("\u00A74You haven't got any spare wireless antennas left in your inventory!");
 			}
 		}
 		else {
-			player.sendMessage("¤4You have put in the maximum amount of antennas already.");
+			player.sendMessage("\u00A74You have put in the maximum amount of antennas already.");
 		}
 	}
 }

@@ -121,8 +121,8 @@ public abstract class BaseComputerBlock  extends GenericCustomBlock {
 						lua.get("loadstring").call(LuaValue.valueOf(script)).call();
 					}
 					catch(LuaError ex) {
-						lua.get("print").call(LuaValue.valueOf("¤c" + ex.getMessage()));
-						lua.get("print").call(LuaValue.valueOf("¤7System halted."));
+						lua.get("print").call(LuaValue.valueOf("\u00A7c" + ex.getMessage()));
+						lua.get("print").call(LuaValue.valueOf("\u00A77System halted."));
 						
 						ex.printStackTrace();
 						
@@ -133,8 +133,8 @@ public abstract class BaseComputerBlock  extends GenericCustomBlock {
 					}
 				}
 				catch(Exception ex) {
-					lua.get("print").call(LuaValue.valueOf("Searching for bootable media... ¤c[FAILED]"));
-					lua.get("print").call(LuaValue.valueOf("¤7System halted."));
+					lua.get("print").call(LuaValue.valueOf("Searching for bootable media... \u00A7c[FAILED]"));
+					lua.get("print").call(LuaValue.valueOf("\u00A77System halted."));
 					
 					Bukkit.getLogger().warning("[ComputerCraft] Error while booting a computer!");
 					Bukkit.getLogger().warning(ex.getMessage());
