@@ -113,7 +113,7 @@ public abstract class BaseComputerBlock  extends GenericCustomBlock {
 		return new ComputerTask() {
 			@Override
 			public void execute(LuaTable lua, String ComputerID) {
-				File os = new File(CCMain.instance.getDataFolder() + "/rom/boot.lua");
+				File os = new File(CCMain.instance.getDataFolder(), "rom" + File.separator + "boot.lua");
 				try {
 					String script = ScriptHelper.getScript(os);
 					
