@@ -5,12 +5,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.database.ComputerData;
 
 public class FileManager {
-	private static File computersDir = new File(CCMain.instance.getDataFolder().getAbsolutePath() + "/computers/");
+	private static File computersDir = new File(CCMain.instance.getDataFolder().getAbsolutePath() + File.separator + "computers" + File.separator);
 	
 	public static void newComputerEvent(ComputerData data) {
 		File computerDir = new File(computersDir, Integer.toString(data.getId()));
@@ -22,7 +23,7 @@ public class FileManager {
 	}
 	
 	public static void deleteComputerEvent(ComputerData data) {
-		//File computersDir = new File(CCMain.instance.getDataFolder().getAbsolutePath() + "/computers");
+		//File computersDir = new File(CCMain.instance.getDataFolder().getAbsolutePath() + File.separator + "computers");
 		if(!computersDir.exists()) computersDir.mkdir();
 		
 		File computerDir = new File(computersDir, Integer.toString(data.getId()));
@@ -32,22 +33,22 @@ public class FileManager {
 	}
 	
 	private static String getValidPath(String path, int CID) {
-		String[] split = path.split("/");
-		String newPath = computersDir + "/" + CID;
+		String[] split = path.split(Pattern.quote(File.separator));
+		String newPath = computersDir + File.separator + CID;
 		
 		for (int i = 0; i < split.length; i++) {
 			String pathPart = split[i];
 			if (!pathPart.isEmpty()) {
 				if (pathPart.equals("..")) {
-					newPath = newPath.substring(0, newPath.lastIndexOf("/"));
+					newPath = newPath.substring(0, newPath.lastIndexOf(File.separator));
 				}
 				else {
-					newPath += "/" + pathPart;
+					newPath += File.separator + pathPart;
 				}
 			}
 		}
 		
-		if (newPath.startsWith(computersDir.getAbsolutePath() + "/" + CID)) {
+		if (newPath.startsWith(computersDir.getAbsolutePath() + File.separator + CID)) {
 			return newPath;
 		}
 		return "";
@@ -57,12 +58,11 @@ public class FileManager {
 		String newPath = getValidPath(path, CID);
 		
 		if (!newPath.equals("")) {
-			newPath += "/";
+			newPath += File.separator;
 			
-			File file = new File(computersDir, CID + "/" + path); 
-				
+			File file = new File(computersDir, CID + File.separator + path); 
 			if (file.isDirectory()) {
-				return newPath.replace(computersDir.getAbsolutePath() + "/" + CID, "");
+				return newPath.replace(computersDir.getAbsolutePath() + File.separator + CID, "");
 			}
 		}
 		return "";
@@ -73,8 +73,8 @@ public class FileManager {
 	}
 	
 	public static boolean mkDir(String path, String name, int CID) {
-		if (getDir(path + "/" + name, CID) != "") {
-			File file = new File(computersDir, CID + "/" + path + "/" + name); // Potentially dangerous
+		if (getDir(path + File.separator + name, CID) != "") { //FIXME getDir only is != "" if directory already exists
+			File file = new File(computersDir, CID + File.separator + path + File.separator + name); // Potentially dangerous
 	
 			if(file.exists() && file.isDirectory()) return true;
 			else if(file.exists()) return false;
@@ -84,10 +84,10 @@ public class FileManager {
 	}
 	
 	public static File getFile(String path, String name, int CID) {
-		String newPath = getValidPath(path + "/" + name, CID);
+		String newPath = getValidPath(path + File.separator + name, CID);
 		
-		if (!newPath.equals("")) {
-			File file = new File(computersDir, CID + "/" + path + "/" + name); // Potentially dangerous
+		if (!newPath.isEmpty()) {
+			File file = new File(computersDir, CID + File.separator + path + File.separator + name); // Potentially dangerous
 			if (file.exists()) 
 				return file;
 		}
@@ -106,7 +106,7 @@ public class FileManager {
 
 				while(output != null) {
 					if (!strFile.toString().isEmpty())
-						strFile.append("/n");
+						strFile.append("\n");
 					strFile.append(output);
 					output = reader.readLine();
 				}
@@ -125,7 +125,7 @@ public class FileManager {
 	}
 	
 	public static boolean mkFile(String path, String name, int CID) {
-		String newPath = getValidPath(path + "/" + name, CID);
+		String newPath = getValidPath(path + File.separator + name, CID);
 		if (!newPath.equals("")) {
 			File newFile = new File(newPath);
 			if (!newFile.exists()) {
@@ -142,9 +142,9 @@ public class FileManager {
 	public static void printList(String path, int CID) {
 		String[] rom_files = null;
 		String[] files = null;
-		if(path == "/") {
+		if(path.equals(File.separator)) {
 			// root, also do rom
-			File rom = new File(CCMain.instance.getDataFolder().getAbsolutePath() + "/rom");
+			File rom = new File(CCMain.instance.getDataFolder().getAbsolutePath() + File.separator + "rom");
 			rom_files = rom.list();
 			if(rom_files != null) {
 				for(int i = 0; i < rom_files.length; i++) {
@@ -156,7 +156,7 @@ public class FileManager {
 			}
 		}
 		
-		File file = new File(computersDir, CID + "/" + path); // Potentially dangerous
+		File file = new File(computersDir, CID + File.separator + path); // Potentially dangerous
 		if(file.exists() && file.getAbsolutePath().startsWith(computersDir.getAbsolutePath() + CID)) {
 			files = file.list();
 			if(files != null) {
@@ -185,14 +185,14 @@ public class FileManager {
 	}
 	
 	public static String rm(String path, int CID) {
-		if(path == "/") {
+		if(path == File.separator) {
 			return "RM_ROOT_ACCESS_DENIED";
 		}
 		else {
 			String dir = getDir(path, CID);
 			
-			if (!dir.isEmpty() && !dir.equals("/")) {
-				File file = new File(computersDir, CID + "/" + path); // Potentially dangerous
+			if (!dir.isEmpty() && !dir.equals(File.separator)) {
+				File file = new File(computersDir, CID + File.separator + path); // Potentially dangerous
 				if(!file.exists()) {
 					return "RM_DOES_NOT_EXIST";
 				}

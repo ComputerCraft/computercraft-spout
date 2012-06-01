@@ -50,7 +50,7 @@ public class RouterBlockGUI {
 		this.SSID = new GenericTextField();
 		SSID.setX(154).setY(40);
 		SSID.setWidth(220).setHeight(15);
-		SSID.setPlaceholder("¤cRequired");
+		SSID.setPlaceholder("\u00A7cRequired");
 		SSID.setText(this.data.getSSID());
 		SSID.setMaximumLines(1);
 		SSID.setPriority(RenderPriority.Low);
@@ -63,7 +63,7 @@ public class RouterBlockGUI {
 		this.password = new GenericTextField();
 		password.setX(154).setY(62);
 		password.setWidth(220).setHeight(15);
-		password.setPlaceholder("¤7Optional");
+		password.setPlaceholder("\u00A77Optional");
 		password.setText(this.data.getPassword());
 		password.setPasswordField(true);
 		password.setMaximumLines(1);
@@ -104,7 +104,7 @@ public class RouterBlockGUI {
 	}
 
 	public void applyChanges() {
-		if(this.SSID.getText().isEmpty()) this.player.sendMessage("¤4SSID was not applied: it was empty");
+		if(this.SSID.getText().isEmpty()) this.player.sendMessage("\u00A74SSID was not applied: it was empty");
 		else this.data.setSSID(SSID.getText());
 		
 		this.data.setPassword(password.getText());

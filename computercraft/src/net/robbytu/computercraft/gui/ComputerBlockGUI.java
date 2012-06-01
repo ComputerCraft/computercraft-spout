@@ -72,7 +72,7 @@ public class ComputerBlockGUI {
 					break;
 				}
 				else {
-					int lastColorIndex = tempText.lastIndexOf("¤", maxOutputLength);
+					int lastColorIndex = tempText.lastIndexOf("\u00A7", maxOutputLength);
 					if (lastColorIndex > -1) {
 						lastColor = tempText.substring(lastColorIndex, lastColorIndex + 2);
 					}
