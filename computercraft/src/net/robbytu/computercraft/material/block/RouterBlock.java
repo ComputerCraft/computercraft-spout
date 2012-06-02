@@ -42,10 +42,10 @@ public class RouterBlock extends GenericCustomBlock {
 			data.setY(y);
 			data.setZ(z);
 			data.setWorld(world.getName());
-			data.setSSID("CCAP-" + data.getId());
 			data.setPassword("");
-			
 			CCMain.instance.getDatabase().save(data);
+			data.setSSID("CCAP-" + data.getId());
+			CCMain.instance.getDatabase().update(data);
 		}
 	}
 	

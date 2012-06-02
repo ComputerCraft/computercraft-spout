@@ -37,8 +37,8 @@ public class CCMain extends JavaPlugin {
 			
 		// Setup all the defaults - This MIGHT be better off in it's own class as we add more configs
 		getDataFolder().mkdir(); // This will not do anythig if it already exists
-		new File(getDataFolder().getAbsolutePath() + "/computers/").mkdir();
-		File romDir = new File(getDataFolder().getAbsolutePath() + "/rom/");
+		new File(getDataFolder().getAbsolutePath(), "computers" + File.separator).mkdir();
+		File romDir = new File(getDataFolder().getAbsolutePath(), "rom" + File.separator);
 		romDir.mkdir();
 		File defaultRom = new File(romDir, "boot.lua");
 		if (!defaultRom.exists()) {
