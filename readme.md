@@ -33,9 +33,7 @@ Developers
 
 **Developer** [bob3695](http://forums.spout.org/members/bob3695.10592/)
 
-**Developer** [![Quantum-Sicarius](http://www.gravatar.com/avatar/cbcdbeb17461fb68c27befee29880127.png?size=16) QuantumSicarius](http://forums.spout.org/members/quantumsicarius.1017/)
-
-**Developer** [![Guy_de_Siguro](http://www.gravatar.com/avatar/7962fc6e594821902af1f0752f34bf48.png?size=16) Guy_de_Siguro](http://forums.spout.org/members/guy_de_siguro.2464/)
+**Developer** [![HAPM](http://www.gravatar.com/avatar/aed2e0756b9b7a9a533ea5dd239de1a0?size=16) HAPM](http://forums.spout.org/members/hapm.11368/)
 
 
 Support
