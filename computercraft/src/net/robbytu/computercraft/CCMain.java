@@ -23,7 +23,7 @@ public class CCMain extends JavaPlugin {
 	
 	// For use in other classes
 	public static CCMain instance;
-	public HashMap<String, ComputerThread> ComputerThreads;
+	public HashMap<Integer, ComputerThread> ComputerThreads;
 	
 	@Override
 	public void onEnable() {
@@ -68,7 +68,7 @@ public class CCMain extends JavaPlugin {
 		
 		// Fill in the static variables
 		instance = this;
-		ComputerThreads = new HashMap<String, ComputerThread>();
+		ComputerThreads = new HashMap<Integer, ComputerThread>();
 		
 		// Register recipes with Spout
 		new Materials();

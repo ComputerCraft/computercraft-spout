@@ -52,7 +52,7 @@ public class RednetHandler {
 			.findUnique();
 		
 		if (sendToCompData != null) {
-			ComputerThread sendToComp = CCMain.instance.ComputerThreads.get(Integer.toString(sendToCompData.getId()));
+			ComputerThread sendToComp = CCMain.instance.ComputerThreads.get(sendToCompData.getId());
 			
 			if (sendToComp != null) {
 				// TODO: Put in checks to see if the SSID is connected to rednet, for now only worry about internal network!

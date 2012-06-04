@@ -61,7 +61,7 @@ public class ComputerThread {
 						ComputerTask task = tasks.take();
 						
 						busy = true;
-						task.execute(lua, Integer.toString(id));
+						task.execute(lua, id);
 						busy = false;
 					}
 				}
@@ -71,8 +71,8 @@ public class ComputerThread {
 				finally {
 					busy = false;
 					
-					if(CCMain.instance.ComputerThreads.containsKey(Integer.toString(id))) {
-						CCMain.instance.ComputerThreads.remove(Integer.toString(id));
+					if(CCMain.instance.ComputerThreads.containsKey(id)) {
+						CCMain.instance.ComputerThreads.remove(id);
 					}
 					
 					thread.interrupt();
@@ -151,7 +151,7 @@ public class ComputerThread {
 						
 						addTask(new ComputerTask() {
 							@Override
-							public void execute(LuaTable lua, String ComputerID) {
+							public void execute(LuaTable lua, int ComputerID) {
 								try {
 									lua.get("loadstring").call(LuaValue.valueOf(script)).call();
 								}
@@ -263,6 +263,12 @@ public class ComputerThread {
 		io.set("isDir", new OneArgFunction() {
 			public LuaValue call(LuaValue val) {
 				return LuaValue.valueOf(FileManager.isDir(val.toString(), CID));
+			}
+		});
+		
+		io.set("separator", new OneArgFunction() {
+			public LuaValue call(LuaValue val) {
+				return LuaValue.valueOf("\\");
 			}
 		});
 		
@@ -477,8 +483,8 @@ public class ComputerThread {
 	public void stop() {
 		if(thread.isAlive()) thread.interrupt();
 		
-		if(CCMain.instance.ComputerThreads.containsKey(Integer.toString(this.id))) {
-			CCMain.instance.ComputerThreads.remove(Integer.toString(this.id));
+		if(CCMain.instance.ComputerThreads.containsKey(this.id)) {
+			CCMain.instance.ComputerThreads.remove(this.id);
 		}
 	}
 }
