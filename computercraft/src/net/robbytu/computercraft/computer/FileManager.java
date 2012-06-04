@@ -150,7 +150,7 @@ public class FileManager {
 				for(int i = 0; i < rom_files.length; i++) {
 					if(rom_files[i] != "boot.lua") {
 						// Don't print the os file
-						CCMain.instance.ComputerThreads.get(Integer.toString(CID)).gui.addEntry(rom_files[i]);
+						CCMain.instance.ComputerThreads.get(CID).gui.addEntry(rom_files[i]);
 					}
 				}
 			}
@@ -161,11 +161,11 @@ public class FileManager {
 			files = file.list();
 			if(files != null) {
 				for(int i = 0; i < files.length; i++) {
-					CCMain.instance.ComputerThreads.get(Integer.toString(CID)).gui.addEntry(files[i]);
+					CCMain.instance.ComputerThreads.get(CID).gui.addEntry(files[i]);
 				}
 			}
 			else {
-				CCMain.instance.ComputerThreads.get(Integer.toString(CID)).gui.addEntry("No such directory.");
+				CCMain.instance.ComputerThreads.get(CID).gui.addEntry("No such directory.");
 			}
 		}
 		
@@ -181,7 +181,7 @@ public class FileManager {
 			total += files.length + " files in folder";
 		}
 
-		CCMain.instance.ComputerThreads.get(Integer.toString(CID)).gui.addEntry(total);
+		CCMain.instance.ComputerThreads.get(CID).gui.addEntry(total);
 	}
 	
 	public static String rm(String path, int CID) {

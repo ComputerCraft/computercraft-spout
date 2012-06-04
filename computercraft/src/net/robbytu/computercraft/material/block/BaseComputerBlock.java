@@ -47,9 +47,9 @@ public abstract class BaseComputerBlock  extends GenericCustomBlock {
 				target.setBlockPowered(false);
 			}
 			
-			if(CCMain.instance.ComputerThreads.containsKey(Integer.toString(data.getId()))) {
-				CCMain.instance.ComputerThreads.get(Integer.toString(data.getId())).thread.interrupt();
-				CCMain.instance.ComputerThreads.remove(Integer.toString(data.getId()));
+			if(CCMain.instance.ComputerThreads.containsKey(data.getId())) {
+				CCMain.instance.ComputerThreads.get(data.getId()).thread.interrupt();
+				CCMain.instance.ComputerThreads.remove(data.getId());
 			}
 			
 			FileManager.deleteComputerEvent(data);
@@ -94,14 +94,14 @@ public abstract class BaseComputerBlock  extends GenericCustomBlock {
 			return this.onBlockInteract(world, x, y, z, player, true);
 		}
 		
-		if(CCMain.instance.ComputerThreads.containsKey(Integer.toString(data.getId()))) {
-			CCMain.instance.ComputerThreads.get(Integer.toString(data.getId())).gui.attachToScreen(player);
+		if(CCMain.instance.ComputerThreads.containsKey(data.getId())) {
+			CCMain.instance.ComputerThreads.get(data.getId()).gui.attachToScreen(player);
 			return true;
 		}
 		
 		ComputerThread thread = new ComputerThread(data.getId(), new ComputerBlockGUI(data.getId()), (SpoutBlock)world.getBlockAt(x, y, z), data.isWireless());
 		
-		CCMain.instance.ComputerThreads.put(Integer.toString(data.getId()), thread);
+		CCMain.instance.ComputerThreads.put(data.getId(), thread);
 		
 		thread.addTask(getOSTask(data.getId()));
 		thread.gui.attachToScreen(player);
@@ -112,7 +112,7 @@ public abstract class BaseComputerBlock  extends GenericCustomBlock {
 	public static ComputerTask getOSTask(final int CID) {
 		return new ComputerTask() {
 			@Override
-			public void execute(LuaTable lua, String ComputerID) {
+			public void execute(LuaTable lua, int ComputerID) {
 				File os = new File(CCMain.instance.getDataFolder(), "rom" + File.separator + "boot.lua");
 				try {
 					String script = ScriptHelper.getScript(os);
