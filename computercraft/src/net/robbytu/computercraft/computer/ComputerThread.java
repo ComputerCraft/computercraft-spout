@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.bukkit.Bukkit;
 import org.getspout.spoutapi.block.SpoutBlock;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
@@ -162,7 +161,7 @@ public class ComputerThread {
 							}
 						});
 						
-						addTask(ComputerBlock.getOSTask(CID));
+						addTask(ComputerBlock.getOSTask(CID)); //TODO bad place to do this, if the started script uses run(), the task queue is screwed up
 						
 						return LuaValue.TRUE;						
 					} catch (IOException e) {
@@ -202,6 +201,23 @@ public class ComputerThread {
 				return toReturn;
 			}
 		});
+		
+		color.set("BLACK", "\u00A70");
+		color.set("DARKBLUE", "\u00A71");
+		color.set("DARKGREEN", "\u00A72");
+		color.set("DARKAQUA", "\u00A73");
+		color.set("DARKRED", "\u00A74");
+		color.set("DARKPURPLE", "\u00A75");
+		color.set("GOLD", "\u00A76");
+		color.set("GREY", "\u00A77");
+		color.set("DARKGREY", "\u00A78");
+		color.set("BLUE", "\u00A79");
+		color.set("GREEN", "\u00A7a");
+		color.set("AQUA", "\u00A7b");
+		color.set("RED", "\u00A7c");
+		color.set("PURPLE", "\u00A7d");
+		color.set("YELLOW", "\u00A7e");
+		
 		lua.set("color", color);
 		
 		// term.* functions
@@ -217,7 +233,6 @@ public class ComputerThread {
 		term.set("setInputTip", new OneArgFunction() {
 			public LuaValue call(LuaValue val) {
 				gui.input.setPlaceholder("\u00A78" + val.toString());
-				
 				return LuaValue.NIL;
 			}
 		});
@@ -258,48 +273,78 @@ public class ComputerThread {
 		});
 		lua.set("term", term);
 		
-		// IO functions
-		LuaTable io = new LuaTable();
-		io.set("isDir", new OneArgFunction() {
+		//Filesytem functions
+		LuaTable fs = new LuaTable();
+		fs.set("isDir", new OneArgFunction() {
 			public LuaValue call(LuaValue val) {
 				return LuaValue.valueOf(FileManager.isDir(val.toString(), CID));
 			}
 		});
 		
-		io.set("separator", new OneArgFunction() {
+		fs.set("separator", FileManager.separator);
+		
+		fs.set("makeDir", new OneArgFunction() {
 			public LuaValue call(LuaValue val) {
-				return LuaValue.valueOf("\\");
+				return LuaValue.valueOf(FileManager.mkDir(val.toString(), CID));
 			}
 		});
 		
-		io.set("mkdir", new TwoArgFunction() {
-			public LuaValue call(LuaValue val, LuaValue val2) {
-				return LuaValue.valueOf(FileManager.mkDir(val.toString(), val2.toString(), CID));
+		fs.set("combine", new TwoArgFunction() {
+			public LuaValue call(LuaValue basePath, LuaValue childPath) {
+				return LuaValue.valueOf(FileManager.combine(basePath.toString(), childPath.toString()));
 			}
 		});
 		
-		io.set("printList", new OneArgFunction() {
+		fs.set("getDir", new OneArgFunction() {
 			public LuaValue call(LuaValue val) {
-				FileManager.printList(val.toString(), CID);
-				return LuaValue.NIL;
+				return LuaValue.valueOf(FileManager.getDir(val.toString(), CID));
 			}
 		});
 
-		io.set("remove", new OneArgFunction() {
+		fs.set("delete", new OneArgFunction() {
 			public LuaValue call(LuaValue val) {
 				return LuaValue.valueOf(FileManager.rm(val.toString(), CID));
 			}
 		});
 		
-		io.set("getDir", new OneArgFunction() {
+		fs.set("exists", new OneArgFunction () {
 			public LuaValue call(LuaValue val) {
-				return LuaValue.valueOf(FileManager.getDir(val.toString(), CID));
+				return LuaValue.valueOf(FileManager.exists(val.toString(), CID));
 			}
 		});
 		
-		io.set("fileExists", new TwoArgFunction () {
+		fs.set("printList", new OneArgFunction() { //TODO implement this in lua
+			public LuaValue call(LuaValue val) {
+				FileManager.printList(val.toString(), CID);
+				return LuaValue.NIL;
+			}
+		});
+		
+		lua.set("fs", fs);
+		
+		// IO functions
+		LuaTable io = new LuaTable();
+		io.set("isDir", fs.get("isDir")); //deprecated, use fs.isDir
+		io.set("mkdir",  new TwoArgFunction() { //deprecated, use fs.makeDir
 			public LuaValue call(LuaValue val, LuaValue val2) {
-				return LuaValue.valueOf(FileManager.fileExists(val.toString(), val2.toString(), CID));
+				return LuaValue.valueOf(FileManager.mkDir(val.toString(), val2.toString(), CID));
+			}
+		});
+		io.set("remove", fs.get("delete")); //deprecated, use fs.remove
+		io.set("getDir", fs.get("getDir")); //deprecated, use fs.getDir
+		io.set("printList", fs.get("printList")); //deprecated, use fs.printList
+
+		io.set("fileExists", new TwoArgFunction() {//deprecated, use fs.exists
+			@Override
+			public LuaValue call(LuaValue val, LuaValue val2) {
+				return LuaValue.valueOf(FileManager.exists(val.toString() + File.separator + val2, CID));
+			}
+		});
+
+		io.set("separator", new ZeroArgFunction() { //deprecated, use fs.seperator
+			@Override
+			public LuaValue call() {
+				return LuaValue.valueOf(FileManager.separator);
 			}
 		});
 		
@@ -370,17 +415,20 @@ public class ComputerThread {
 				return LuaValue.NIL;
 			}
 		});
+		
 		lua.set("event", events);
 		
 		// System API
-		LuaTable sys = new LuaTable();
-		sys.set("getComputerID", new ZeroArgFunction() {
+		LuaTable os = new LuaTable();
+		os.set("computerID", new ZeroArgFunction() {
 			public LuaValue call() {
 				return LuaValue.valueOf(id);
 			}
 		});
 		
-		sys.set("isWireless", new ZeroArgFunction() {
+		os.set("getComputerID", os.get("computerID")); // deprecated, use os.computerID instead
+		
+		os.set("isWireless", new ZeroArgFunction() {
 			public LuaValue call() {
 				ComputerData data = CCMain.instance.getDatabase().find(ComputerData.class)
 						.where()
@@ -391,7 +439,7 @@ public class ComputerThread {
 			}
 		});
 		
-		sys.set("getComputerCoords", new ZeroArgFunction() {
+		os.set("getComputerCoords", new ZeroArgFunction() {
 			public LuaValue call() {
 				ComputerData data = CCMain.instance.getDatabase().find(ComputerData.class)
 				.where()
@@ -404,17 +452,20 @@ public class ComputerThread {
 			}
 		});
 		
-		lua.set("shutdown", new ZeroArgFunction() {
+		os.set("shutdown", new ZeroArgFunction() {
 			public LuaValue call() {
 				// Do shutdown events, so that scripts might save configs for example
-				lua.get("triggerEvent").call(LuaValue.valueOf("shutdown"), LuaValue.NIL);
+				lua.get("event").get("triggerEvent").call(LuaValue.valueOf("shutdown"), LuaValue.NIL);
 				
 				thread.interrupt();
 				
 				return LuaValue.NIL;
 			}
 		});
-		lua.set("sys", sys);
+		
+		lua.set("shutdown", os.get("shutdown")); //deprecated, use os.shutdown
+		lua.set("os", os);
+		lua.set("sys",os); // Deprecated
 		
 		// Redstone API
 		LuaTable redstone = new LuaTable();
@@ -441,7 +492,10 @@ public class ComputerThread {
 				return LuaValue.valueOf(target.isBlockPowered());
 			}
 		});
-		lua.set("redstone", redstone);
+
+		redstone.set("isPowered", redstone.get("getInput")); //deprecated, use rs.getInput
+		lua.set("rs", redstone);
+		lua.set("redstone", redstone); //deprecated, use rs
 		
 		// Network API - This is for both internal and world-wide networking
 		LuaTable rednet = new LuaTable();
@@ -471,6 +525,8 @@ public class ComputerThread {
 				return LuaValue.valueOf("RN_NO_WIRELESS");
 			}
 		});
+		
+		rednet.set("open", rednet.get("connect")); //deprecated, use rednet.connect
 		lua.set("rednet", rednet);
 		
 		return lua;
