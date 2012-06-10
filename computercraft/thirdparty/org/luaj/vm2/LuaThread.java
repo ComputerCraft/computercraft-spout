@@ -21,6 +21,9 @@
 ******************************************************************************/
 package org.luaj.vm2;
 
+import net.robbytu.computercraft.luaj.InstanceThread;
+import net.robbytu.computercraft.luaj.LuaInstance;
+
 import org.luaj.vm2.lib.DebugLib;
 
 /** 
@@ -84,16 +87,16 @@ public class LuaThread extends LuaValue implements Runnable {
 	public final LuaFunction[]     callstack     = new LuaFunction[MAX_CALLSTACK];
 	public int                     calls         = 0;
 
-	private static final LuaThread mainthread = new LuaThread();
+	//private static final LuaThread mainthread = new LuaThread();
 	
 	// state of running thread including call stack
-	private static LuaThread       running_thread    = mainthread;
+	//private static LuaThread       running_thread    = mainthread;
 
 	// thread-local used by DebugLib to store debugging state
 	public Object debugState;
 
 	
-	LuaThread() {		
+	protected LuaThread() {		
 	}
 	
 	/** 
@@ -147,7 +150,7 @@ public class LuaThread extends LuaValue implements Runnable {
 	 * @return {@link LuaThread} that is currenly running
 	 */
 	public static LuaThread getRunning() {
-		return running_thread;
+		return LuaInstance.getRunning();
 	}
 	
 	/**
@@ -155,7 +158,7 @@ public class LuaThread extends LuaValue implements Runnable {
 	 * @return true if this is the main thread
 	 */
 	public static boolean isMainThread(LuaThread r) {		
-		return r == mainthread;
+		return r instanceof LuaInstance;
 	}
 	
 	/** 
@@ -165,14 +168,14 @@ public class LuaThread extends LuaValue implements Runnable {
 	 * @param globals The global variables for the main ghread. 
 	 */
 	public static void setGlobals(LuaValue globals) {
-		running_thread.env = globals;
+		getRunning().env = globals;
 	}
 	
 	/** Get the current thread's environment 
 	 * @return {@link LuaValue} containing the global variables of the current thread.
 	 */
 	public static LuaValue getGlobals() {
-		LuaValue e = running_thread.env;
+		LuaValue e = getRunning().env;
 		return e!=null? e: LuaValue.error("LuaThread.setGlobals() not initialized");
 	}
 
@@ -182,6 +185,7 @@ public class LuaThread extends LuaValue implements Runnable {
 	 * @see DebugLib
 	 */
 	public static final void onCall(LuaFunction function) {
+		LuaThread running_thread = getRunning();
 		running_thread.callstack[running_thread.calls++] = function;
 		if (DebugLib.DEBUG_ENABLED) 
 			DebugLib.debugOnCall(running_thread, running_thread.calls, function);
@@ -192,6 +196,7 @@ public class LuaThread extends LuaValue implements Runnable {
 	 * @see DebugLib
 	 */
 	public static final void onReturn() {
+		LuaThread running_thread = getRunning();
 		running_thread.callstack[--running_thread.calls] = null;
 		if (DebugLib.DEBUG_ENABLED) 
 			DebugLib.debugOnReturn(running_thread, running_thread.calls);
@@ -203,7 +208,7 @@ public class LuaThread extends LuaValue implements Runnable {
 	 * @see DebugLib
 	 */
 	public static int getCallstackDepth() {
-		return running_thread.calls;
+		return getRunning().calls;
 	}
 
 	/**
@@ -212,6 +217,7 @@ public class LuaThread extends LuaValue implements Runnable {
 	 * @return LuaFunction on the call stack, or null if outside of range of active stack
 	 */
 	public static final LuaFunction getCallstackFunction(int level) {
+		LuaThread running_thread = getRunning();
 		return level>0 && level<=running_thread.calls? 
 			running_thread.callstack[running_thread.calls-level]:
 			null;
@@ -262,6 +268,7 @@ public class LuaThread extends LuaValue implements Runnable {
 	 * @return {@link Varargs} provided as arguments to {@link #yield(Varargs)}
 	 */
 	public Varargs resume(Varargs args) {
+		LuaThread running_thread = getRunning();
 
 		synchronized ( this ) {
  			if ( status == STATUS_DEAD ) {
@@ -281,7 +288,7 @@ public class LuaThread extends LuaValue implements Runnable {
 
 				// start the thread
 				if ( thread == null ) { 
-					thread = new Thread(this);
+					thread = new InstanceThread(this);
 					thread.start();
 				}
 				
@@ -308,6 +315,7 @@ public class LuaThread extends LuaValue implements Runnable {
 			} finally {
 				// previous thread is now running again
 				running_thread = prior;
+				LuaInstance.setRunning(running_thread);
 				prior.status = STATUS_RUNNING;
 			}
 		}
