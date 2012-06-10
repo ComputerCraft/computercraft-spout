@@ -14,12 +14,12 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
-import org.luaj.vm2.lib.jse.JsePlatform;
 
 import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.computer.network.RednetHandler;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
+import net.robbytu.computercraft.luaj.SpoutPlatform;
 import net.robbytu.computercraft.material.block.ComputerBlock;
 import net.robbytu.computercraft.util.BlockManager;
 import net.robbytu.computercraft.util.ScriptHelper;
@@ -97,7 +97,7 @@ public class ComputerThread {
 	}
 	
 	public LuaTable initLua(final int CID) {
-		final LuaTable lua = JsePlatform.debugGlobals();
+		final LuaTable lua = SpoutPlatform.debugGlobals();
 		
 		lua.set("collectgarbage", LuaValue.NIL);
 		lua.set("dofile", LuaValue.NIL);
@@ -106,7 +106,6 @@ public class ComputerThread {
 		lua.set("module", LuaValue.NIL);
 		lua.set("require", LuaValue.NIL);
 		lua.set("package", LuaValue.NIL);
-		lua.set("io", LuaValue.NIL);
 		lua.set("os", LuaValue.NIL);
 		lua.set("debug", LuaValue.NIL);
 		lua.set("print", LuaValue.NIL);
