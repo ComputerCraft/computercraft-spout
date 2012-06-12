@@ -48,6 +48,13 @@ public class FileManager {
 		return result == null ? "" : result.getAbsolutePath();
 	}
 	
+	/**
+	 * Converts a real file path to a computer path for the given computer.
+	 * 
+	 * @param path The file path to convert.
+	 * @param CID The id of the computer, this path should be converted for.
+	 * @return The computer path as a string or an empty string if the given real path is not in the path for the given computer id.
+	 */
 	public static String toComputerPath(File path, int CID) {
 		String result = path.getAbsolutePath();
 		if (result.startsWith(computersDir.getAbsolutePath() + File.separator + CID + File.separator)) {
@@ -61,7 +68,12 @@ public class FileManager {
 		return "";
 	}
 	
-	
+	/**
+	 * Combines a parent path with a sub path.
+	 * @param path The parent path.
+	 * @param subPath The child path.
+	 * @return The parent path combined with the sub path in one string.
+	 */
 	public static String combine(String path, String subPath) {
 		if (!path.endsWith(separator)) {
 			path += separator; 
@@ -74,6 +86,13 @@ public class FileManager {
 		return path + subPath;
 	}
 	
+	/**
+	 * Converts a computer path to a real file system path represented by a File object.
+	 * 
+	 * @param path The path to convert
+	 * @param CID The computer, for what this computer path needs to be generated.
+	 * @return The File object representing the real path or <b>null</b> if the path is not valid.
+	 */
 	public static File toRealPath(String path, int CID) {
 		path = path.replace(separator, File.separator);
 		String[] split = path.split(Pattern.quote(File.separator));
@@ -99,6 +118,16 @@ public class FileManager {
 		}
 	}
 	
+	/**
+	 * Gets a file or directory for a given computer path. 
+	 * 
+	 * The difference between this method and {@link #toRealPath(String, int) toRealPath} is, that 
+	 * this method will return <b>null</b>, if the given path does not exist. 
+	 * 
+	 * @param path The path to get the file or directory for.
+	 * @param CID The computer id of the computer to get the file or directory for.
+	 * @return The file or folder as a File instance or <b>null</b> if it is invalid or doesn't exist.
+	 */
 	public static File get(String path, int CID) {
 		File file = toRealPath(path, CID);
 		
@@ -147,7 +176,7 @@ public class FileManager {
 	}
 	
 	public static File getFile(String path, String name, int CID) {
-		File file = get(path + File.separator + name, CID);
+		File file = get(combine(path, name), CID);
 		
 		if (file.isFile()) {
 			return file;
@@ -284,8 +313,8 @@ public class FileManager {
 					f.delete();
 				}
 			}
-		  }
+		}
 
-		  directory.delete();
+		directory.delete();
 	}
 }

@@ -19,10 +19,12 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
 ******************************************************************************/
-package org.luaj.vm2.lib;
+package net.robbytu.computercraft.luaj.lib;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import net.robbytu.computercraft.luaj.LuaInstance;
 
 import org.luaj.vm2.LuaClosure;
 import org.luaj.vm2.Buffer;
@@ -31,6 +33,8 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.compiler.DumpState;
+import org.luaj.vm2.lib.OneArgFunction;
+import org.luaj.vm2.lib.VarArgFunction;
 
 /** 
  * Subclass of {@link LibFunction} which implements the lua standard {@code string} 
@@ -78,7 +82,7 @@ public class StringLib extends OneArgFunction {
 		instance = t;
 		if ( LuaString.s_metatable == null )
 			LuaString.s_metatable = tableOf( new LuaValue[] { INDEX, t } );
-		PackageLib.instance.LOADED.set("string", t);
+		LuaInstance.getActiveInstance().getPackageLib().LOADED.set("string", t);
 		return t;
 	}
 	

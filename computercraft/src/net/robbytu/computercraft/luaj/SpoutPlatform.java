@@ -1,18 +1,17 @@
 package net.robbytu.computercraft.luaj;
 
+import net.robbytu.computercraft.computer.ComputerThread;
+import net.robbytu.computercraft.luaj.lib.BaseLib;
+import net.robbytu.computercraft.luaj.lib.DebugLib;
+import net.robbytu.computercraft.luaj.lib.MathLib;
+import net.robbytu.computercraft.luaj.lib.OsLib;
+import net.robbytu.computercraft.luaj.lib.PackageLib;
+import net.robbytu.computercraft.luaj.lib.StringLib;
+import net.robbytu.computercraft.luaj.lib.TableLib;
+
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaThread;
 import org.luaj.vm2.compiler.LuaC;
-import org.luaj.vm2.lib.CoroutineLib;
-import org.luaj.vm2.lib.DebugLib;
-import org.luaj.vm2.lib.PackageLib;
-import org.luaj.vm2.lib.StringLib;
-import org.luaj.vm2.lib.TableLib;
-import org.luaj.vm2.lib.jse.JseBaseLib;
-import org.luaj.vm2.lib.jse.JseMathLib;
-import org.luaj.vm2.lib.jse.JseOsLib;
-import org.luaj.vm2.lib.jse.JsePlatform;
-import org.luaj.vm2.lib.jse.LuajavaLib;
 
 /**
  * The SpoutPlatform supports all libraries needed in LuaJ to run in Spout
@@ -29,16 +28,19 @@ public class SpoutPlatform {
 	 * @see JsePlatform
 	 * @see JmePlatform
 	 */
-	public static LuaTable standardGlobals() {
+	public static LuaTable standardGlobals(ComputerThread computer) {
 		LuaTable _G = new LuaTable();
-		_G.load(new JseBaseLib()); // TODO: need rewrite for ComputerCraft
-		_G.load(new PackageLib()); // TODO: need rewrite for ComputerCraft
-		_G.load(new TableLib()); // TODO: need rewrite for ComputerCraft
-		_G.load(new StringLib()); // TODO: need rewrite for ComputerCraft
-		_G.load(new CoroutineLib()); // TODO: need rewrite for ComputerCraft
-		_G.load(new JseMathLib()); // TODO: need rewrite for ComputerCraft
-		_G.load(new JseOsLib()); // TODO: need rewrite for ComputerCraft
-		_G.load(new LuajavaLib()); // TODO: need rewrite for ComputerCraft
+		LuaInstance activeInstance = LuaInstance.getActiveInstance();
+		activeInstance.baseLib = new BaseLib(computer);
+		activeInstance.packageLib = new PackageLib();
+		_G.load(activeInstance.baseLib); 
+		_G.load(activeInstance.packageLib);
+		_G.load(new TableLib());
+		_G.load(new StringLib()); 
+		//_G.load(new CoroutineLib()); // TODO: need rewrite for ComputerCraft
+		_G.load(new MathLib());
+		_G.load(new OsLib());
+		//_G.load(new LuajavaLib()); // TODO: need rewrite for ComputerCraft
 		LuaThread.setGlobals(_G);
 		LuaC.install();
 		return _G;		
@@ -52,8 +54,8 @@ public class SpoutPlatform {
 	 * @see JmePlatform
 	 * @see DebugLib
 	 */
-	public static LuaTable debugGlobals() {
-		LuaTable _G = standardGlobals();
+	public static LuaTable debugGlobals(ComputerThread thread) {
+		LuaTable _G = standardGlobals(thread);
 		_G.load(new DebugLib());  // TODO: need rewrite for ComputerCraft
 		return _G;
 	}
