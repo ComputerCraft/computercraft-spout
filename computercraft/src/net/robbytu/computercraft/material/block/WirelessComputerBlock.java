@@ -1,6 +1,8 @@
 package net.robbytu.computercraft.material.block;
 
+import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.material.Materials;
+import net.robbytu.computercraft.util.ConfigManager;
 
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
@@ -11,13 +13,13 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 public class WirelessComputerBlock extends BaseComputerBlock {
 
 	public WirelessComputerBlock(Plugin plugin, String name, boolean isOpaque, int face) {
-		super(plugin, name, "http://robbytu.net/spout/computercraft/resources/computerblock.png", isOpaque, face);
+		super(plugin, name, ConfigManager.graphicsBasepath + "computerblock.png", isOpaque, face);
 		this.setName("Computer with Wireless Network Card");
 		
 		if (!name.equals("WirelessComputerBlockEast"))
 			setItemDrop(new SpoutItemStack(Materials.WirelessComputerBlockEast, 1));
 		
-		setupDesign(plugin, face, "http://robbytu.net/spout/computercraft/resources/computerblock.png");
+		setupDesign(plugin, face, ConfigManager.graphicsBasepath + "computerblock.png");
 	}
 	
 	@Override

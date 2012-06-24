@@ -1,6 +1,9 @@
 package net.robbytu.computercraft.material.block;
 
+import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.material.Materials;
+import net.robbytu.computercraft.util.ConfigManager;
+
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.block.design.GenericCubeBlockDesign;
 import org.getspout.spoutapi.block.design.Texture;
@@ -9,7 +12,7 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 public class ComputerBlock extends BaseComputerBlock {
 
 	public ComputerBlock(Plugin plugin, String name, boolean isOpaque, int face) {
-		super(plugin, name, "http://robbytu.net/spout/computercraft/resources/computerblock.png", isOpaque, face);
+		super(plugin, name, ConfigManager.graphicsBasepath + "computerblock.png", isOpaque, face);
 		this.setName("Computer");
 		if (!name.equals("ComputerBlockEast"))
 			setItemDrop(new SpoutItemStack(Materials.ComputerBlockEast, 1));

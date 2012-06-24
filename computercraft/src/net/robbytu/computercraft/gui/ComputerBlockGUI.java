@@ -1,6 +1,7 @@
 package net.robbytu.computercraft.gui;
 
 import net.robbytu.computercraft.CCMain;
+import net.robbytu.computercraft.util.ConfigManager;
 
 import org.bukkit.Bukkit;
 import org.getspout.spoutapi.gui.GenericButton;
@@ -22,7 +23,7 @@ public class ComputerBlockGUI {
 		this.inputBuffer = "";
 		this.buttonClicked = false;
 		
-		this.bg = new GenericTexture("http://robbytu.net/spout/computercraft/resources/GUIBackground.png");
+		this.bg = new GenericTexture(ConfigManager.graphicsBasepath + "GUIBackground.png");
 		this.bg.setX(40).setY(1);
 		this.bg.setWidth(352).setHeight(308);
 		this.bg.setPriority(RenderPriority.High);

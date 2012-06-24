@@ -1,2 +1,4 @@
 antennas:
     range: 10
+graphics:
+    basepath: "http://www.robbytu.net/spout/computercraft/resources/"

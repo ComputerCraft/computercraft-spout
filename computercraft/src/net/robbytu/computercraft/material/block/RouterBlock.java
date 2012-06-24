@@ -3,6 +3,7 @@ package net.robbytu.computercraft.material.block;
 import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.database.RouterData;
 import net.robbytu.computercraft.gui.RouterBlockGUI;
+import net.robbytu.computercraft.util.ConfigManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -19,7 +20,7 @@ public class RouterBlock extends GenericCustomBlock {
 		
 		GenericCubeBlockDesign BlockDesign = new GenericCubeBlockDesign(
 				CCMain.instance,
-				new Texture(CCMain.instance, "http://robbytu.net/spout/computercraft/resources/computerblock.png", 256, 256, 16),
+				new Texture(CCMain.instance, ConfigManager.graphicsBasepath + "computerblock.png", 256, 256, 16),
 				new int[] { 2, 3, 3, 3, 3, 2});
 		
 		this.setBlockDesign(BlockDesign);
