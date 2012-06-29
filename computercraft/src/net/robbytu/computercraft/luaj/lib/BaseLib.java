@@ -319,7 +319,7 @@ public class BaseLib extends OneArgFunction {
 	    return f;
 	}
 	
-	private class StringInputStream extends InputStream {
+	class StringInputStream extends InputStream {
 		LuaValue func;
 		byte[] bytes; 
 		int offset;

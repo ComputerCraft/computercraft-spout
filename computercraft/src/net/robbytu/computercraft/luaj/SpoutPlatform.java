@@ -31,15 +31,15 @@ public class SpoutPlatform {
 	public static LuaTable standardGlobals(ComputerThread computer) {
 		LuaTable _G = new LuaTable();
 		LuaInstance activeInstance = LuaInstance.getActiveInstance();
-		activeInstance.baseLib = new BaseLib(computer);
-		activeInstance.packageLib = new PackageLib();
-		_G.load(activeInstance.baseLib); 
-		_G.load(activeInstance.packageLib);
-		_G.load(new TableLib());
-		_G.load(new StringLib()); 
+		//activeInstance.baseLib = new BaseLib(computer);
+		//activeInstance.packageLib = new PackageLib();
+		//_G.load(activeInstance.baseLib); 
+		//_G.load(activeInstance.packageLib);
+		//_G.load(new TableLib());
+		//_G.load(new StringLib()); 
 		//_G.load(new CoroutineLib()); // TODO: need rewrite for ComputerCraft
-		_G.load(new MathLib());
-		_G.load(new OsLib());
+		//_G.load(new MathLib());
+		//_G.load(new OsLib());
 		//_G.load(new LuajavaLib()); // TODO: need rewrite for ComputerCraft
 		LuaThread.setGlobals(_G);
 		LuaC.install();

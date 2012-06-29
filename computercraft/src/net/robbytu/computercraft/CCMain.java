@@ -6,12 +6,23 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import net.robbytu.computercraft.computer.ComputerThread;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.database.RouterData;
+import net.robbytu.computercraft.lib.LuaLib;
+import net.robbytu.computercraft.lib.spout.BaseLib;
+import net.robbytu.computercraft.lib.spout.ColorLib;
+import net.robbytu.computercraft.lib.spout.EventsLib;
+import net.robbytu.computercraft.lib.spout.FileSystemLib;
+import net.robbytu.computercraft.lib.spout.IoLib;
+import net.robbytu.computercraft.lib.spout.OsLib;
+import net.robbytu.computercraft.lib.spout.RedstoneLib;
+import net.robbytu.computercraft.lib.spout.StringLib;
+import net.robbytu.computercraft.lib.spout.TerminalLib;
 import net.robbytu.computercraft.listeners.ComputerBlockPlacementListener;
 import net.robbytu.computercraft.material.Materials;
 import net.robbytu.computercraft.util.ConfigManager;
@@ -24,6 +35,7 @@ public class CCMain extends JavaPlugin {
 	// For use in other classes
 	public static CCMain instance;
 	public HashMap<Integer, ComputerThread> ComputerThreads;
+	private ArrayList<Class<? extends LuaLib>> libClasses = new ArrayList<Class<? extends LuaLib>>();
 	
 	@Override
 	public void onEnable() {
@@ -73,6 +85,17 @@ public class CCMain extends JavaPlugin {
 		// Register recipes with Spout
 		new Materials();
 		
+		// Register default libs
+		registerLib(BaseLib.class);
+		registerLib(FileSystemLib.class);
+		registerLib(IoLib.class);
+		registerLib(OsLib.class);
+		registerLib(StringLib.class);
+		registerLib(ColorLib.class);
+		registerLib(EventsLib.class);
+		registerLib(TerminalLib.class);
+		registerLib(RedstoneLib.class);
+		
 		// Register listeners
 		Bukkit.getPluginManager().registerEvents(new ComputerBlockPlacementListener(), this);
 		
@@ -83,6 +106,15 @@ public class CCMain extends JavaPlugin {
 		catch (Exception ex) {
 			installDDL();
 		}
+	}
+	
+	public void registerLib(Class<? extends LuaLib> libclass) {
+		libClasses.add(libclass);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Collection<Class<? extends LuaLib>> getLibrarys() {
+		return (Collection<Class<? extends LuaLib>>) libClasses.clone();
 	}
 	
 	@Override

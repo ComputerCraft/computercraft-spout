@@ -4,6 +4,8 @@ import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.computer.ComputerThread;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.database.RouterData;
+import net.robbytu.computercraft.lib.LuaLib;
+import net.robbytu.computercraft.lib.spout.EventsLib;
 import net.robbytu.computercraft.util.ConfigManager;
 
 import org.bukkit.Bukkit;
@@ -58,7 +60,11 @@ public class RednetHandler {
 				// TODO: Put in checks to see if the SSID is connected to rednet, for now only worry about internal network!
 				if (sendToComp.connectedSSID().equals(SSID)) {
 					// Send messsage to the computer!
-					sendToComp.triggerEvent("rednet_receive", message);
+					LuaLib lib = sendToComp.getLib("events");
+					if (lib == null || !(lib instanceof EventsLib)) 
+						return "RN_SEND_ERR_EVENTSLIBMISSING";
+					EventsLib events = (EventsLib)lib;
+					events.triggerEvent("rednet_receive", message);
 					return "RN_SEND_SUCCESSFUL";
 				}
 			}
