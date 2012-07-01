@@ -8,11 +8,13 @@ import net.robbytu.computercraft.computer.ComputerThread;
 import net.robbytu.computercraft.computer.FileManager;
 import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
+import net.robbytu.computercraft.lib.spout.ColorLib;
 import net.robbytu.computercraft.util.BlockManager;
 import net.robbytu.computercraft.util.ScriptHelper;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.block.SpoutBlock;
 import org.getspout.spoutapi.material.block.GenericCustomBlock;
@@ -20,9 +22,9 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 
-public abstract class BaseComputerBlock  extends GenericCustomBlock {
-
+public abstract class BaseComputerBlock  extends GenericCustomBlock {	
 	public BaseComputerBlock(Plugin plugin, String name, String textureURL, boolean isOpaque, int face) {
 		super(plugin, name, isOpaque);
 		
@@ -118,7 +120,17 @@ public abstract class BaseComputerBlock  extends GenericCustomBlock {
 					String script = ScriptHelper.getScript(os);
 					
 					try {
-						lua.get("loadstring").call(LuaValue.valueOf(script)).call();
+						Varargs code = lua.get("loadstring").invoke(LuaValue.varargsOf(LuaValue.valueOf(script), LuaValue.valueOf("boot.lua")));
+						if (code.isnil(1)) {
+							ComputerThread thread = CCMain.instance.ComputerThreads.get(CID);
+							if (thread != null) {
+								thread.print(ColorLib.RED + "Error when compiling boot media: " + code.optjstring(2, "No error specified."));
+								thread.print(ColorLib.GRAY + "System halted");
+							}
+						}
+						else {
+							lua.get("loadstring").call(LuaValue.valueOf(script)).call();							
+						}
 					}
 					catch(LuaError ex) {
 						lua.get("print").call(LuaValue.valueOf("\u00A7c" + ex.getMessage()));
@@ -146,6 +158,23 @@ public abstract class BaseComputerBlock  extends GenericCustomBlock {
 				}
 			}
 		};
+	}
+	
+	@Override
+	public boolean isPowerSource() {
+		return true;
+	}
+	
+	@Override
+	public boolean isProvidingPowerTo(World world, int x, int y, int z,
+			BlockFace face) {
+		if (face == BlockFace.DOWN || face == BlockFace.UP)
+			return false;
+		
+		ComputerThread thread = CCMain.instance.getComputerAt(world.getName(), x, y, z);
+		if (thread == null)
+			return false;
+		return false;
 	}
 	
 	protected void onBlockPlace(World world, int x, int y, int z, boolean isWireless) {

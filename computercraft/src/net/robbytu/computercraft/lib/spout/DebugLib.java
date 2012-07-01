@@ -19,9 +19,10 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
 ******************************************************************************/
-package net.robbytu.computercraft.luaj.lib;
+package net.robbytu.computercraft.lib.spout;
 
-import net.robbytu.computercraft.luaj.LuaInstance;
+import net.robbytu.computercraft.computer.ComputerThread;
+import net.robbytu.computercraft.lib.LuaLib;
 
 import org.luaj.vm2.Lua;
 import org.luaj.vm2.LuaBoolean;
@@ -67,107 +68,152 @@ import org.luaj.vm2.lib.VarArgFunction;
  * @see JmePlatform
  * @see <a href="http://www.lua.org/manual/5.1/manual.html#5.9">http://www.lua.org/manual/5.1/manual.html#5.9</a>
  */
-public class DebugLib extends VarArgFunction {
+public class DebugLib extends LuaLib {
 	public static final boolean CALLS = (null != System.getProperty("CALLS"));
 	public static final boolean TRACE = (null != System.getProperty("TRACE"));
 
 	// leave this unset to allow obfuscators to 
 	// remove it in production builds
 	public static boolean DEBUG_ENABLED;
-
-	static final String[] NAMES = {
-		"debug",
-		"getfenv",
-		"gethook",
-		"getinfo",
-		"getlocal",
-		"getmetatable",
-		"getregistry",
-		"getupvalue",
-		"setfenv",
-		"sethook",
-		"setlocal",
-		"setmetatable",
-		"setupvalue",
-		"traceback",
-	};
 	
-	private static final int INIT        	= 0;
-	private static final int DEBUG        	= 1;
-	private static final int GETFENV        = 2;
-	private static final int GETHOOK        = 3;
-	private static final int GETINFO        = 4;
-	private static final int GETLOCAL       = 5;
-	private static final int GETMETATABLE 	= 6;
-	private static final int GETREGISTRY    = 7;
-	private static final int GETUPVALUE    	= 8;
-	private static final int SETFENV        = 9;
-	private static final int SETHOOK        = 10;
-	private static final int SETLOCAL 		= 11;
-	private static final int SETMETATABLE   = 12;
-	private static final int SETUPVALUE    	= 13;
-	private static final int TRACEBACK    	= 14;
-
 	/* maximum stack for a Lua function */
 	private static final int MAXSTACK = 250;
 	
-	private static final LuaString LUA        = valueOf("Lua");  
-	private static final LuaString JAVA       = valueOf("Java");  
-	private static final LuaString QMARK      = valueOf("?");  
-	private static final LuaString GLOBAL     = valueOf("global");  
-	private static final LuaString LOCAL      = valueOf("local");  
-	private static final LuaString METHOD     = valueOf("method");  
-	private static final LuaString UPVALUE    = valueOf("upvalue");  
-	private static final LuaString FIELD      = valueOf("field");
-	private static final LuaString CALL       = valueOf("call");  
-	private static final LuaString LINE       = valueOf("line");  
-	private static final LuaString COUNT      = valueOf("count");  
-	private static final LuaString RETURN     = valueOf("return");  
-	private static final LuaString TAILRETURN = valueOf("tail return");
+	private static final LuaString LUA        = LuaValue.valueOf("Lua");  
+	private static final LuaString JAVA       = LuaValue.valueOf("Java");  
+	private static final LuaString QMARK      = LuaValue.valueOf("?");  
+	private static final LuaString GLOBAL     = LuaValue.valueOf("global");  
+	private static final LuaString LOCAL      = LuaValue.valueOf("local");  
+	private static final LuaString METHOD     = LuaValue.valueOf("method");  
+	private static final LuaString UPVALUE    = LuaValue.valueOf("upvalue");  
+	private static final LuaString FIELD      = LuaValue.valueOf("field");
+	private static final LuaString CALL       = LuaValue.valueOf("call");  
+	private static final LuaString LINE       = LuaValue.valueOf("line");  
+	private static final LuaString COUNT      = LuaValue.valueOf("count");  
+	private static final LuaString RETURN     = LuaValue.valueOf("return");  
+	private static final LuaString TAILRETURN = LuaValue.valueOf("tail return");
 	
-	private static final LuaString FUNC            = valueOf("func");  
-	private static final LuaString NUPS            = valueOf("nups");  
-	private static final LuaString NAME            = valueOf("name");  
-	private static final LuaString NAMEWHAT        = valueOf("namewhat");  
-	private static final LuaString WHAT            = valueOf("what");  
-	private static final LuaString SOURCE          = valueOf("source");  
-	private static final LuaString SHORT_SRC       = valueOf("short_src");  
-	private static final LuaString LINEDEFINED     = valueOf("linedefined");  
-	private static final LuaString LASTLINEDEFINED = valueOf("lastlinedefined");  
-	private static final LuaString CURRENTLINE     = valueOf("currentline");  
-	private static final LuaString ACTIVELINES     = valueOf("activelines");  
+	private static final LuaString FUNC            = LuaValue.valueOf("func");  
+	private static final LuaString NUPS            = LuaValue.valueOf("nups");  
+	private static final LuaString NAME            = LuaValue.valueOf("name");  
+	private static final LuaString NAMEWHAT        = LuaValue.valueOf("namewhat");  
+	private static final LuaString WHAT            = LuaValue.valueOf("what");  
+	private static final LuaString SOURCE          = LuaValue.valueOf("source");  
+	private static final LuaString SHORT_SRC       = LuaValue.valueOf("short_src");  
+	private static final LuaString LINEDEFINED     = LuaValue.valueOf("linedefined");  
+	private static final LuaString LASTLINEDEFINED = LuaValue.valueOf("lastlinedefined");  
+	private static final LuaString CURRENTLINE     = LuaValue.valueOf("currentline");  
+	private static final LuaString ACTIVELINES     = LuaValue.valueOf("activelines");  
 
 	public DebugLib() {
+		super("debug");
 	}
-	
-	private LuaTable init() {
+
+
+	@Override
+	public LuaValue init(ComputerThread computer, LuaValue env) {
 		DEBUG_ENABLED = true;
 		LuaTable t = new LuaTable();
-		bind(t, DebugLib.class, NAMES, DEBUG);
+		t.set("debug",new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _debug(args);
+			}
+		});
+		
+		t.set("getfenv", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _getfenv(args);
+			}
+		});
+		
+		t.set("gethook", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _gethook(args);
+			}
+		});
+		
+		t.set("getinfo", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _getinfo(args,this);
+			}
+		});
+		
+		t.set("getlocal", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _getlocal(args);
+			}
+		});
+		
+		t.set("getmetatable", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _getmetatable(args);
+			}
+		});
+		
+		t.set("getregistry", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _getregistry(args);
+			}
+		});
+		
+		t.set("getupvalue", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _getupvalue(args);
+			}
+		});
+		
+		t.set("setfenv", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _setfenv(args);
+			}
+		});
+		
+		t.set("sethook", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _sethook(args);
+			}
+		});
+		
+		t.set("setlocal", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _setlocal(args);				
+			}
+		});
+		
+		t.set("setmetatable", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _setmetatable(args);
+			}
+		});
+		
+		t.set("setupvalue", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _setupvalue(args);
+			}
+		});
+		
+		t.set("traceback", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return _traceback(args);
+			}
+		});
+		
 		env.set("debug", t);
-		LuaInstance.getActiveInstance().getPackageLib().LOADED.set("debug", t);
 		return t;
-	}
-	
-	public Varargs invoke(Varargs args) {
-		switch ( opcode ) {
-		case INIT:         return init();
-		case DEBUG:        return _debug(args);
-		case GETFENV:      return _getfenv(args);
-		case GETHOOK:      return _gethook(args);
-		case GETINFO:      return _getinfo(args,this);
-		case GETLOCAL:     return _getlocal(args);
-		case GETMETATABLE: return _getmetatable(args);
-		case GETREGISTRY:  return _getregistry(args);
-		case GETUPVALUE:   return _getupvalue(args);
-		case SETFENV:      return _setfenv(args);
-		case SETHOOK:      return _sethook(args);
-		case SETLOCAL:     return _setlocal(args);
-		case SETMETATABLE: return _setmetatable(args);
-		case SETUPVALUE:   return _setupvalue(args);
-		case TRACEBACK:    return _traceback(args);
-		default:           return NONE;
-		}
 	}
 
 	// ------------------------ Debug Info management --------------------------
@@ -186,7 +232,7 @@ public class DebugLib extends VarArgFunction {
 		int pc, top;
 		
 		private DebugInfo() {			
-			func = NIL;
+			func = LuaValue.NIL;
 		}
 		private DebugInfo(LuaValue func) {
 			pc = -1;
@@ -201,7 +247,7 @@ public class DebugLib extends VarArgFunction {
 			this.closure = (func instanceof LuaClosure? (LuaClosure) func: null);
 		}
 		void clear() {
-			func = NIL;
+			func = LuaValue.NIL;
 			closure = null;
 			stack = null;
 			varargs = extras = null;
@@ -407,17 +453,17 @@ public class DebugLib extends VarArgFunction {
 	// j2se subclass may wish to override and provide actual console here. 
 	// j2me platform has not System.in to provide console.
 	static Varargs _debug(Varargs args) {
-		return NONE;
+		return LuaValue.NONE;
 	}
 	
 	static Varargs _gethook(Varargs args) {
 		int a=1;
 		LuaThread thread = args.isthread(a)? args.checkthread(a++): LuaThread.getRunning(); 
 		DebugState ds = getDebugState(thread);
-		return varargsOf(
+		return LuaValue.varargsOf(
 				ds.hookfunc,
-				valueOf((ds.hookcall?"c":"")+(ds.hookline?"l":"")+(ds.hookrtrn?"r":"")),
-				valueOf(ds.hookcount));
+				LuaValue.valueOf((ds.hookcall?"c":"")+(ds.hookline?"l":"")+(ds.hookrtrn?"r":"")),
+				LuaValue.valueOf(ds.hookcount));
 	}
 
 	static Varargs _sethook(Varargs args) {
@@ -434,7 +480,7 @@ public class DebugLib extends VarArgFunction {
 				case 'r': rtrn=true; break;
 			}
 		getDebugState(thread).sethook(func, call, line, rtrn, count);
-		return NONE;
+		return LuaValue.NONE;
 	}
 
 	static Varargs _getfenv(Varargs args) {
@@ -468,7 +514,7 @@ public class DebugLib extends VarArgFunction {
 			di = ds.findDebugInfo( func.checkfunction() );
 		}
 		if ( di == null )
-			return NIL;
+			return LuaValue.NIL;
 
 		// start a table
 		LuaTable info = new LuaTable();
@@ -480,15 +526,15 @@ public class DebugLib extends VarArgFunction {
 						Prototype p = c.p;
 						info.set(WHAT, LUA);
 						info.set(SOURCE, p.source);
-						info.set(SHORT_SRC, valueOf(sourceshort(p)));
-						info.set(LINEDEFINED, valueOf(p.linedefined));
-						info.set(LASTLINEDEFINED, valueOf(p.lastlinedefined));
+						info.set(SHORT_SRC, LuaValue.valueOf(sourceshort(p)));
+						info.set(LINEDEFINED, LuaValue.valueOf(p.linedefined));
+						info.set(LASTLINEDEFINED, LuaValue.valueOf(p.lastlinedefined));
 					} else {
 						String shortName = di.func.tojstring();
 						LuaString name = LuaString.valueOf("[Java] "+shortName);
 						info.set(WHAT, JAVA);
 						info.set(SOURCE, name);
-						info.set(SHORT_SRC, valueOf(shortName));
+						info.set(SHORT_SRC, LuaValue.valueOf(shortName));
 						info.set(LINEDEFINED, LuaValue.MINUSONE);
 						info.set(LASTLINEDEFINED, LuaValue.MINUSONE);
 					}
@@ -496,17 +542,17 @@ public class DebugLib extends VarArgFunction {
 				}
 				case 'l': {
 					int line = di.currentline();
-					info.set( CURRENTLINE, valueOf(line) );
+					info.set( CURRENTLINE, LuaValue.valueOf(line) );
 					break;
 				}
 				case 'u': {
-					info.set(NUPS, valueOf(c!=null? c.p.nups: 0));
+					info.set(NUPS, LuaValue.valueOf(c!=null? c.p.nups: 0));
 					break;
 				}
 				case 'n': {
 					LuaString[] kind = di.getfunckind();
 					info.set(NAME, kind!=null? kind[0]: QMARK);
-					info.set(NAMEWHAT, kind!=null? kind[1]: EMPTYSTRING);
+					info.set(NAMEWHAT, kind!=null? kind[1]: LuaValue.EMPTYSTRING);
 					break;
 				}
 				case 'f': {
@@ -548,9 +594,9 @@ public class DebugLib extends VarArgFunction {
 		LuaString name = (di!=null? di.getlocalname(local): null);
 		if ( name != null ) {
 			LuaValue value = di.stack[local-1];
-			return varargsOf( name, value );
+			return LuaValue.varargsOf( name, value );
 		} else {
-			return NIL;
+			return LuaValue.NIL;
 		}
 	}
 
@@ -568,14 +614,14 @@ public class DebugLib extends VarArgFunction {
 			di.stack[local-1] = value;
 			return name;
 		} else {
-			return NIL;
+			return LuaValue.NIL;
 		}
 	}
 
 	static LuaValue _getmetatable(Varargs args) {
 		LuaValue object = args.arg(1);
 		LuaValue mt = object.getmetatable();
-		return mt!=null? mt: NIL;
+		return mt!=null? mt: LuaValue.NIL;
 	}
 
 	static Varargs _setmetatable(Varargs args) {
@@ -583,17 +629,17 @@ public class DebugLib extends VarArgFunction {
 		try {
 			LuaValue mt = args.opttable(2, null);
 			switch ( object.type() ) {
-				case TNIL:      LuaNil.s_metatable      = mt; break;
-				case TNUMBER:   LuaNumber.s_metatable   = mt; break;
-				case TBOOLEAN:  LuaBoolean.s_metatable  = mt; break;
-				case TSTRING:   LuaString.s_metatable   = mt; break;
-				case TFUNCTION: LuaFunction.s_metatable = mt; break;
-				case TTHREAD:   LuaThread.s_metatable   = mt; break;
+				case LuaValue.TNIL:      LuaNil.s_metatable      = mt; break;
+				case LuaValue.TNUMBER:   LuaNumber.s_metatable   = mt; break;
+				case LuaValue.TBOOLEAN:  LuaBoolean.s_metatable  = mt; break;
+				case LuaValue.TSTRING:   LuaString.s_metatable   = mt; break;
+				case LuaValue.TFUNCTION: LuaFunction.s_metatable = mt; break;
+				case LuaValue.TTHREAD:   LuaThread.s_metatable   = mt; break;
 				default: object.setmetatable( mt );
 			}
 			return LuaValue.TRUE;
 		} catch ( LuaError e ) {
-			return varargsOf(FALSE, valueOf(e.toString()));
+			return LuaValue.varargsOf(LuaValue.FALSE, LuaValue.valueOf(e.toString()));
 		}
 	}
 
@@ -618,10 +664,10 @@ public class DebugLib extends VarArgFunction {
 			LuaClosure c = (LuaClosure) func;
 			LuaString name = findupvalue(c, up);
 			if ( name != null ) {
-				return varargsOf(name, c.upValues[up-1].getValue() );
+				return LuaValue.varargsOf(name, c.upValues[up-1].getValue() );
 			}
 		}
-		return NIL;
+		return LuaValue.NIL;
 	}
 
 	static LuaValue _setupvalue(Varargs args) {
@@ -636,7 +682,7 @@ public class DebugLib extends VarArgFunction {
 				return name;
 			}
 		}
-		return NIL;
+		return LuaValue.NIL;
 	}
 
 	static LuaValue _traceback(Varargs args) {
@@ -645,7 +691,7 @@ public class DebugLib extends VarArgFunction {
 		String message = args.optjstring(a++, null);
 		int level = args.optint(a++,1);
 		String tb = DebugLib.traceback(thread, level-1);
-		return valueOf(message!=null? message+"\n"+tb: tb);
+		return LuaValue.valueOf(message!=null? message+"\n"+tb: tb);
 	}
 	
 	// =================== public utilities ====================
@@ -973,5 +1019,4 @@ public class DebugLib extends VarArgFunction {
 		}
 		return pt.code[last];
 	}
-	
 }

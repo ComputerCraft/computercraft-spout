@@ -19,154 +19,182 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
 ******************************************************************************/
-package net.robbytu.computercraft.luaj.lib;
+package net.robbytu.computercraft.lib.spout;
 
 import java.io.IOException;
 
-import net.robbytu.computercraft.luaj.LuaInstance;
+import net.robbytu.computercraft.computer.ComputerThread;
+import net.robbytu.computercraft.lib.LuaLib;
 
+import org.bukkit.Location;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
+import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.VarArgFunction;
+import org.luaj.vm2.lib.ZeroArgFunction;
 
 /**
- * Subclass of {@link LibFunction} which implements the standard lua {@code os} library.
- * <p>
- * It is a usable base with simplified stub functions
- * for library functions that cannot be implemented uniformly 
- * on Jse and Jme.   
- * <p>
- * This can be installed as-is on either platform, or extended 
- * and refined to be used in a complete Jse implementation.
- * <p>
- * Because the nature of the {@code os} library is to encapsulate 
- * os-specific features, the behavior of these functions varies considerably 
- * from their counterparts in the C platform.  
- * <p>
- * The following functions have limited implementations of features 
- * that are not supported well on Jme:
- * <ul>
- * <li>{@code execute()}</li>
- * <li>{@code remove()}</li>
- * <li>{@code rename()}</li>
- * <li>{@code tmpname()}</li>
- * </ul>
- * <p>
- * Typically, this library is included as part of a call to either 
- * {@link JmePlatform#standardGlobals()}
- * <p>
- * To instantiate and use it directly, 
- * link it into your globals table via {@link LuaValue#load(LuaValue)} using code such as:
- * <pre> {@code
- * LuaTable _G = new LuaTable();
- * LuaThread.setGlobals(_G);
- * _G.load(new BaseLib());
- * _G.load(new PackageLib());
- * _G.load(new OsLib());
- * System.out.println( _G.get("os").get("time").call() );
- * } </pre>
- * Doing so will ensure the library is properly initialized 
- * and loaded into the globals table. 
- * <p>
-  * @see LibFunction
- * @see JseOsLib
- * @see JsePlatform
- * @see JmePlatform
+ * Subclass of {@link LuaLib} which implements the standard lua {@code os} library.
+ *
  * @see <a href="http://www.lua.org/manual/5.1/manual.html#5.8">http://www.lua.org/manual/5.1/manual.html#5.8</a>
  */
-public class OsLib extends VarArgFunction {
+public class OsLib extends LuaLib {
 	public static String TMP_PREFIX    = ".luaj";
 	public static String TMP_SUFFIX    = "/tmp/tmp";
-
-	private static final int INIT      = 0;
-	private static final int CLOCK     = 1;
-	private static final int DATE      = 2;
-	private static final int DIFFTIME  = 3;
-	private static final int EXECUTE   = 4;
-	private static final int EXIT      = 5;
-	private static final int GETENV    = 6;
-	private static final int REMOVE    = 7;
-	private static final int RENAME    = 8;
-	private static final int SETLOCALE = 9;
-	private static final int TIME      = 10;
-	private static final int TMPNAME   = 11;
-
-	private static final String[] NAMES = {
-		"clock",
-		"date",
-		"difftime",
-		"execute",
-		"exit",
-		"getenv",
-		"remove",
-		"rename",
-		"setlocale",
-		"time",
-		"tmpname",
-	};
 	
 	private static final long t0 = System.currentTimeMillis();
 	private static long tmpnames = t0;
+	private ComputerThread computer;
 
 	/** 
 	 * Create and OsLib instance.   
 	 */
 	public OsLib() {
+		super("os");
 	}
 
-	public LuaValue init() {
-		LuaTable t = new LuaTable();
-		bind(t, this.getClass(), NAMES, CLOCK);
-		env.set("os", t);
-		LuaInstance.getActiveInstance().getPackageLib().LOADED.set("os", t);
-		return t;
-	}
-
-	public Varargs invoke(Varargs args) {
-		try {
-			switch ( opcode ) {
-			case INIT: 
-				return init();
-			case CLOCK:
+	@Override
+	public LuaValue init(ComputerThread computer, LuaValue env) {
+		this.computer = computer;
+		LuaTable os = new LuaTable();
+		os.set("clock", new ZeroArgFunction() {
+			@Override
+			public LuaValue call() {
 				return valueOf(clock());
-			case DATE: {
+			}
+		});
+		
+		os.set("date", new VarArgFunction() {
+			public Varargs invoke(Varargs args) {
 				String s = args.optjstring(1, null);
 				double t = args.optdouble(2,-1);
-				return valueOf( date(s, t==-1? System.currentTimeMillis()/1000.: t) );
-			}
-			case DIFFTIME:
+				return valueOf( date(s, t==-1? System.currentTimeMillis()/1000.: t) );				
+			};
+		});
+		
+		os.set("difftime", new VarArgFunction() {
+			public Varargs invoke(Varargs args) {
 				return valueOf(difftime(args.checkdouble(1),args.checkdouble(2)));
-			case EXECUTE:
+			}
+		});
+		
+		os.set("execute", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
 				return valueOf(execute(args.optjstring(1, null)));
-			case EXIT:
+			}
+		});
+		
+		os.set("exit", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
 				exit(args.optint(1, 0));
 				return NONE;
-			case GETENV: {
-				final String val = getenv(args.checkjstring(1));
+			}
+		});
+		
+		os.set("getenv", new OneArgFunction() {
+			@Override
+			public LuaValue call(LuaValue arg) {
+				final String val = getenv(arg.checkjstring());
 				return val!=null? valueOf(val): NIL;
 			}
-			case REMOVE:
-				remove(args.checkjstring(1));
+		});
+		
+		os.set("remove", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				try {
+					remove(args.checkjstring(1));
+				} catch (IOException e) {
+					return varargsOf(NIL, valueOf(e.getMessage()));
+				}
 				return LuaValue.TRUE;
-			case RENAME:
-				rename(args.checkjstring(1), args.checkjstring(2));
+			}
+		});
+		
+		os.set("rename", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				try {
+					rename(args.checkjstring(1), args.checkjstring(2));
+				} catch ( IOException e ) {
+					return varargsOf(NIL, valueOf(e.getMessage()));
+				}
+				
 				return LuaValue.TRUE;
-			case SETLOCALE: {
+			}
+		});
+		
+		os.set("setlocale", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
 				String s = setlocale(args.optjstring(1,null), args.optjstring(2, "all"));
 				return s!=null? valueOf(s): NIL;
 			}
-			case TIME:
+		});
+
+		os.set("time", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
 				return valueOf(time(args.arg1().isnil()? null: args.checktable(1)));
-			case TMPNAME:
+			}
+		});
+		
+		os.set("tmpname", new ZeroArgFunction() {
+			@Override
+			public LuaValue call() {
 				return valueOf(tmpname());
 			}
-			return NONE;
-		} catch ( IOException e ) {
-			return varargsOf(NIL, valueOf(e.getMessage()));
-		}
+		});
+		
+		os.set("computerID", new ZeroArgFunction() {
+			public LuaValue call() {
+				return valueOf(computerID());
+			}
+		});
+		
+		os.set("isWireless", new ZeroArgFunction() {
+			public LuaValue call() {				
+				return LuaValue.valueOf(isWireless());
+			}
+		});
+		
+		os.set("getComputerCoords", new ZeroArgFunction() {
+			public LuaValue call() {
+				return LuaValue.valueOf(getComputerCoords());
+			}
+		});
+		
+		os.set("shutdown", new ZeroArgFunction(env) {
+			public LuaValue call() {
+				// Do shutdown events, so that scripts might save configs for example
+				env.get("event").get("triggerEvent").call(LuaValue.valueOf("shutdown"), LuaValue.NIL);
+				
+				throw new LuaError("Shutdown requested"); // FIXME: better then Thread.interrupt, but only returns to last pcall.
+			}
+		});
+		
+		env.set("os", os);
+		return os;
 	}
 
+	public int computerID() {
+		return computer.getID();
+	}
+
+	public boolean isWireless() {
+		return computer.isWireless();
+	}
+	
+	public String getComputerCoords() {
+		Location pos = computer.getPosition();
+		String result = pos.getBlockX() + "," + pos.getBlockY() + "," + pos.getBlockZ() + "," + pos.getWorld(); //TODO rewrite this to return VarArgs
+		return result;
+	}
+	
 	/**
 	 * @return an approximation of the amount in seconds of CPU time used by 
 	 * the program.
@@ -180,7 +208,7 @@ public class OsLib extends VarArgFunction {
 	 * In POSIX, Windows, and some other systems, this value is exactly t2-t1.
 	 * @param t2
 	 * @param t1
-	 * @return diffeence in time values, in seconds
+	 * @return difference in time values, in seconds
 	 */
 	protected double difftime(double t2, double t1) {
 		return t2 - t1;

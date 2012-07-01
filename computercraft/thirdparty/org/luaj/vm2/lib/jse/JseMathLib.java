@@ -31,7 +31,7 @@ import org.luaj.vm2.lib.TwoArgFunction;
  * library. 
  * <p> 
  * It contains all lua math functions, including those not available on the JME platform.  
- * See {@link org.luaj.lib.MathLib} for the exception list.  
+ * See {@link net.robbytu.computercraft.lib.spout.lib.MathLib} for the exception list.  
  * <p>
  * Typically, this library is included as part of a call to 
  * {@link JsePlatform#standardGlobals()} 

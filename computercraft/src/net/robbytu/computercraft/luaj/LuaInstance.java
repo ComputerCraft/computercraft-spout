@@ -1,8 +1,5 @@
 package net.robbytu.computercraft.luaj;
 
-import net.robbytu.computercraft.luaj.lib.BaseLib;
-import net.robbytu.computercraft.luaj.lib.PackageLib;
-
 import org.luaj.vm2.LuaThread;
 
 /**
@@ -22,10 +19,6 @@ public class LuaInstance extends LuaThread {
 	 * Saves the currently active child thread of this instance
 	 */
 	private LuaThread runningThread;
-	
-	BaseLib baseLib;
-	
-	PackageLib packageLib;
 	
 	protected static LuaThread test;
 
@@ -92,13 +85,5 @@ public class LuaInstance extends LuaThread {
 			throw new InstanceAlreadySetException("Tried to inflate a LuaInstance into a thread, that already has a vaild instance.");
 		
 		LuaInstance.activeInstance.set(this);		
-	}
-
-	public BaseLib getBaseLib() {
-		return baseLib;
-	}
-
-	public PackageLib getPackageLib() {
-		return packageLib;
 	}
 }

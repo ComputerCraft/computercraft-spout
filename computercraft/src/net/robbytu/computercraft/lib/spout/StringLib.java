@@ -19,11 +19,13 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
 ******************************************************************************/
-package net.robbytu.computercraft.luaj.lib;
+package net.robbytu.computercraft.lib.spout;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import net.robbytu.computercraft.computer.ComputerThread;
+import net.robbytu.computercraft.lib.LuaLib;
 import net.robbytu.computercraft.luaj.LuaInstance;
 
 import org.luaj.vm2.LuaClosure;
@@ -35,6 +37,7 @@ import org.luaj.vm2.Varargs;
 import org.luaj.vm2.compiler.DumpState;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.VarArgFunction;
+import org.luaj.vm2.LuaValue.*;
 
 /** 
  * Subclass of {@link LibFunction} which implements the lua standard {@code string} 
@@ -63,57 +66,120 @@ import org.luaj.vm2.lib.VarArgFunction;
  * @see JmePlatform
  * @see <a href="http://www.lua.org/manual/5.1/manual.html#5.4">http://www.lua.org/manual/5.1/manual.html#5.4</a>
  */
-public class StringLib extends OneArgFunction {
+public class StringLib extends LuaLib {
 
 	public static LuaTable instance;
 	
 	public StringLib() {
+		super("string");
 	}
 
-	public LuaValue call(LuaValue arg) {
-		LuaTable t = new LuaTable();
-		bind(t, StringLib1.class, new String[] {
-			"dump", "len", "lower", "reverse", "upper", } );
-		bind(t, StringLibV.class, new String[] {
-			"byte", "char", "find", "format", 
-			"gmatch", "gsub", "match", "rep", 
-			"sub"} );
-		env.set("string", t);
-		instance = t;
-		if ( LuaString.s_metatable == null )
-			LuaString.s_metatable = tableOf( new LuaValue[] { INDEX, t } );
-		LuaInstance.getActiveInstance().getPackageLib().LOADED.set("string", t);
-		return t;
-	}
-	
-	public static final class StringLib1 extends OneArgFunction {
-		public LuaValue call(LuaValue arg) {
-			switch ( opcode ) { 
-			case 0: return dump(arg); // dump (function)
-			case 1: return StringLib.len(arg); // len (function)
-			case 2: return lower(arg); // lower (function)
-			case 3: return reverse(arg); // reverse (function)
-			case 4: return upper(arg); // upper (function)
+	@Override
+	public LuaValue init(ComputerThread computer, LuaValue env) {
+		LuaTable string = new LuaTable();
+		env.set("string", string);
+		string.set("dump", new OneArgFunction() {	
+			@Override
+			public LuaValue call(LuaValue arg) {
+				return dump(arg);
 			}
-			return NIL;
-		}
-	}
+		});
+		
+		string.set("len", new OneArgFunction() {
+			@Override
+			public LuaValue call(LuaValue arg) {
+				return StringLib.len(arg);
+			}
+		});
+		
+		string.set("lower", new OneArgFunction() {
+			@Override
+			public LuaValue call(LuaValue arg) {
+				return lower(arg);
+			}
+		});
 
-	public static final class StringLibV extends VarArgFunction {
-		public Varargs invoke(Varargs args) {
-			switch ( opcode ) {
-			case 0: return StringLib.byte_( args );
-			case 1: return StringLib.char_( args );
-			case 2: return StringLib.find( args );
-			case 3: return StringLib.format( args );
-			case 4: return StringLib.gmatch( args );
-			case 5: return StringLib.gsub( args );
-			case 6: return StringLib.match( args );
-			case 7: return StringLib.rep( args );
-			case 8: return StringLib.sub( args );
+		string.set("reverse", new OneArgFunction() {
+			@Override
+			public LuaValue call(LuaValue arg) {
+				return reverse(arg);
 			}
-			return NONE;
-		}
+		});
+
+		string.set("upper", new OneArgFunction() {
+			@Override
+			public LuaValue call(LuaValue arg) {
+				return upper(arg);
+			}
+		});
+		
+		string.set("byte", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return byte_(args);
+			}
+		});
+
+
+		string.set("char", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return char_(args);
+			}
+		});
+		
+		string.set("find", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return find(args);
+			}
+		});
+		
+		string.set("format", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return format(args);
+			}
+		});
+		
+		string.set("gmatch", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return gmatch(args);
+			}
+		});
+		
+		string.set("gsub", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return gsub(args);
+			}
+		});
+		
+		string.set("match", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return match(args);
+			}
+		});
+		
+		string.set("rep", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return rep(args);
+			}
+		});
+		
+		string.set("sub", new VarArgFunction() {
+			@Override
+			public Varargs invoke(Varargs args) {
+				return StringLib.sub(args);
+			}
+		});
+		
+		org.luaj.vm2.lib.StringLib.instance = string; //Make us the instance used to be called from LuaString
+		
+		return string;
 	}
 
 	/**
@@ -135,14 +201,14 @@ public class StringLib extends OneArgFunction {
 		int n,i;
 		if (posi <= 0) posi = 1;
 		if (pose > l) pose = l;
-		if (posi > pose) return NONE;  /* empty interval; return no values */
+		if (posi > pose) return LuaTable.NONE;  /* empty interval; return no values */
 		n = (int)(pose -  posi + 1);
 		if (posi + n <= pose)  /* overflow? */
-		    error("string slice too long");
+		    LuaTable.error("string slice too long");
 		LuaValue[] v = new LuaValue[n];
 		for (i=0; i<n; i++)
-			v[i] = valueOf(s.luaByte(posi+i-1));
-		return varargsOf(v);
+			v[i] = LuaTable.valueOf(s.luaByte(posi+i-1));
+		return LuaTable.varargsOf(v);
 	}
 
 	/** 
@@ -161,7 +227,7 @@ public class StringLib extends OneArgFunction {
 		byte[] bytes = new byte[n];
 		for ( int i=0, a=1; i<n; i++, a++ ) {
 			int c = args.checkint(a);
-			if (c<0 || c>=256) argerror(a, "invalid value");
+			if (c<0 || c>=256) LuaTable.argerror(a, "invalid value");
 			bytes[i] = (byte) c;
 		}
 		return LuaString.valueOf( bytes );
@@ -183,7 +249,7 @@ public class StringLib extends OneArgFunction {
 			DumpState.dump( ((LuaClosure)f).p, baos, true );
 			return LuaString.valueOf(baos.toByteArray());
 		} catch (IOException e) {
-			return error( e.getMessage() );
+			return LuaTable.error( e.getMessage() );
 		}
 	}
 
@@ -287,7 +353,7 @@ public class StringLib extends OneArgFunction {
 							}
 						}	break;
 						default:
-							error("invalid option '%"+(char)fdsc.conversion+"' to 'format'");
+							LuaTable.error("invalid option '%"+(char)fdsc.conversion+"' to 'format'");
 							break;
 						}
 					}
@@ -354,7 +420,7 @@ public class StringLib extends OneArgFunction {
 				}
 			}
 			if ( p - start > MAX_FLAGS )
-				error("invalid format (repeated flags)");
+				LuaTable.error("invalid format (repeated flags)");
 			
 			width = -1;
 			if ( Character.isDigit( (char)c ) ) {
@@ -380,7 +446,7 @@ public class StringLib extends OneArgFunction {
 			}
 			
 			if ( Character.isDigit( (char) c ) )
-				error("invalid format (width or precision too long)");
+				LuaTable.error("invalid format (width or precision too long)");
 			
 			zeroPad &= !leftAdjust; // '-' overrides '0'
 			conversion = c;
@@ -607,7 +673,7 @@ public class StringLib extends OneArgFunction {
 				break;
 		}
 		lbuf.append( src.substring( soffset, srclen ) );
-		return varargsOf(lbuf.tostring(), valueOf(n));
+		return LuaTable.varargsOf(lbuf.tostring(), LuaTable.valueOf(n));
 	}
 	
 	/** 
@@ -628,7 +694,7 @@ public class StringLib extends OneArgFunction {
 	 * The definition of what an uppercase letter is depends on the current locale.
 	 */
 	static LuaValue lower( LuaValue arg ) {
-		return valueOf( arg.checkjstring().toLowerCase() );
+		return LuaTable.valueOf( arg.checkjstring().toLowerCase() );
 	}
 
 	/**
@@ -700,7 +766,7 @@ public class StringLib extends OneArgFunction {
 		if ( start <= end ) {
 			return s.substring( start-1 , end );
 		} else {
-			return EMPTYSTRING;
+			return LuaTable.EMPTYSTRING;
 		}
 	}
 	
@@ -712,7 +778,7 @@ public class StringLib extends OneArgFunction {
 	 * The definition of what a lowercase letter is depends on the current locale.	
 	 */
 	static LuaValue upper( LuaValue arg ) {
-		return valueOf(arg.checkjstring().toUpperCase());
+		return LuaTable.valueOf(arg.checkjstring().toUpperCase());
 	}
 	
 	/**
@@ -734,7 +800,7 @@ public class StringLib extends OneArgFunction {
 		if ( fastMatch ) {
 			int result = s.indexOf( pat, init );
 			if ( result != -1 ) {
-				return varargsOf( valueOf(result+1), valueOf(result+pat.length()) );
+				return LuaTable.varargsOf( LuaTable.valueOf(result+1), LuaTable.valueOf(result+pat.length()) );
 			}
 		} else {
 			MatchState ms = new MatchState( args, s, pat );
@@ -752,14 +818,14 @@ public class StringLib extends OneArgFunction {
 				ms.reset();
 				if ( ( res = ms.match( soff, poff ) ) != -1 ) {
 					if ( find ) {
-						return varargsOf( valueOf(soff+1), valueOf(res), ms.push_captures( false, soff, res ));
+						return LuaTable.varargsOf( LuaTable.valueOf(soff+1), LuaTable.valueOf(res), ms.push_captures( false, soff, res ));
 					} else {
 						return ms.push_captures( true, soff, res );
 					}
 				}
 			} while ( soff++ < s.length() && !anchor );
 		}
-		return NIL;
+		return LuaTable.NIL;
 	}
 	
 	private static int posrelat( int pos, int len ) {
@@ -769,7 +835,7 @@ public class StringLib extends OneArgFunction {
 	// Pattern matching implementation
 	
 	private static final int L_ESC = '%';
-	private static final LuaString SPECIALS = valueOf("^$*+?.([%-");
+	private static final LuaString SPECIALS = LuaTable.valueOf("^$*+?.([%-");
 	private static final int MAX_CAPTURES = 32;
 	
 	private static final int CAP_UNFINISHED = -1;
@@ -872,14 +938,14 @@ public class StringLib extends OneArgFunction {
 				break;
 				
 			default:
-				error( "bad argument: string/function/table expected" );
+				LuaValue.error( "bad argument: string/function/table expected" );
 				return;
 			}
 			
 			if ( !repl.toboolean() ) {
 				repl = s.substring( soffset, end );
 			} else if ( ! repl.isstring() ) {
-				error( "invalid replacement value (a "+repl.typename()+")" );
+				LuaValue.error( "invalid replacement value (a "+repl.typename()+")" );
 			}
 			lbuf.append( repl.strvalue() );
 		}
@@ -887,13 +953,13 @@ public class StringLib extends OneArgFunction {
 		Varargs push_captures( boolean wholeMatch, int soff, int end ) {
 			int nlevels = ( this.level == 0 && wholeMatch ) ? 1 : this.level;
 			switch ( nlevels ) {
-			case 0: return NONE;
+			case 0: return LuaTable.NONE;
 			case 1: return push_onecapture( 0, soff, end );
 			}
 			LuaValue[] v = new LuaValue[nlevels];
 			for ( int i = 0; i < nlevels; ++i )
 				v[i] = push_onecapture( i, soff, end );
-			return varargsOf(v);
+			return LuaTable.varargsOf(v);
 		}
 		
 		private LuaValue push_onecapture( int i, int soff, int end ) {
@@ -901,15 +967,15 @@ public class StringLib extends OneArgFunction {
 				if ( i == 0 ) {
 					return s.substring( soff, end );
 				} else {
-					return error( "invalid capture index" );
+					return LuaValue.error( "invalid capture index" );
 				}
 			} else {
 				int l = clen[i];
 				if ( l == CAP_UNFINISHED ) {
-					return error( "unfinished capture" );
+					return LuaValue.error( "unfinished capture" );
 				}
 				if ( l == CAP_POSITION ) {
-					return valueOf( cinit[i] + 1 );
+					return LuaValue.valueOf( cinit[i] + 1 );
 				} else {
 					int begin = cinit[i];
 					return s.substring( begin, begin + l );
@@ -920,7 +986,7 @@ public class StringLib extends OneArgFunction {
 		private int check_capture( int l ) {
 			l -= '1';
 			if ( l < 0 || l >= level || this.clen[l] == CAP_UNFINISHED ) {
-				error("invalid capture index");
+				LuaValue.error("invalid capture index");
 			}
 			return l;
 		}
@@ -930,7 +996,7 @@ public class StringLib extends OneArgFunction {
 			for ( level--; level >= 0; level-- )
 				if ( clen[level] == CAP_UNFINISHED )
 					return level;
-			error("invalid pattern capture");
+			LuaValue.error("invalid pattern capture");
 			return 0;
 		}
 		
@@ -938,7 +1004,7 @@ public class StringLib extends OneArgFunction {
 			switch ( p.luaByte( poffset++ ) ) {
 			case L_ESC:
 				if ( poffset == p.length() ) {
-					error( "malformed pattern (ends with %)" );
+					LuaValue.error( "malformed pattern (ends with %)" );
 				}
 				return poffset + 1;
 				
@@ -946,7 +1012,7 @@ public class StringLib extends OneArgFunction {
 				if ( p.luaByte( poffset ) == '^' ) poffset++;
 				do {
 					if ( poffset == p.length() ) {
-						error( "malformed pattern (missing ])" );
+						LuaValue.error( "malformed pattern (missing ])" );
 					}
 					if ( p.luaByte( poffset++ ) == L_ESC && poffset != p.length() )
 						poffset++;
@@ -1030,7 +1096,7 @@ public class StringLib extends OneArgFunction {
 					return end_capture( soffset, poffset + 1 );
 				case L_ESC:
 					if ( poffset + 1 == p.length() )
-						error("malformed pattern (ends with '%')");
+						LuaValue.error("malformed pattern (ends with '%')");
 					switch ( p.luaByte( poffset + 1 ) ) {
 					case 'b':
 						soffset = matchbalance( soffset, poffset + 2 );
@@ -1040,7 +1106,7 @@ public class StringLib extends OneArgFunction {
 					case 'f': {
 						poffset += 2;
 						if ( p.luaByte( poffset ) != '[' ) {
-							error("Missing [ after %f in pattern");
+							LuaValue.error("Missing [ after %f in pattern");
 						}
 						int ep = classend( poffset );
 						int previous = ( soffset == 0 ) ? -1 : s.luaByte( soffset - 1 );
@@ -1120,7 +1186,7 @@ public class StringLib extends OneArgFunction {
 			int res;
 			int level = this.level;
 			if ( level >= MAX_CAPTURES ) {
-				error( "too many captures" );
+				LuaValue.error( "too many captures" );
 			}
 			cinit[ level ] = soff;
 			clen[ level ] = what;
@@ -1152,7 +1218,7 @@ public class StringLib extends OneArgFunction {
 		int matchbalance( int soff, int poff ) {
 			final int plen = p.length();
 			if ( poff == plen || poff + 1 == plen ) {
-				error( "unbalanced pattern" );
+				LuaValue.error( "unbalanced pattern" );
 			}
 			if ( s.luaByte( soff ) != p.luaByte( poff ) )
 				return -1;
