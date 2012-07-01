@@ -90,9 +90,10 @@ shell = function()
 			print(color.byString("RED") .. "Something went wrong!")
 		end
 	elseif string.sub(input, 0, 4) == "RUN " then
-		if run(_curdir, string.sub(input, 5)) then
-			_exit_shell = true
-		end
+		result, errmsg = run(fs.combine(_curdir, string.sub(input, 5)))
+		if not result then
+			print(color.RED .. "error: " .. errmsg)	
+		end 
 	elseif string.sub(input, 0, 7) == "MKFILE " then
 		if io.mkFile(_curdir, string.sub(input, 8)) then
 			print(color.byString("GREEN") .. "File was created!")

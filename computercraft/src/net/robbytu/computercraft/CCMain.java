@@ -19,9 +19,12 @@ import net.robbytu.computercraft.lib.spout.ColorLib;
 import net.robbytu.computercraft.lib.spout.EventsLib;
 import net.robbytu.computercraft.lib.spout.FileSystemLib;
 import net.robbytu.computercraft.lib.spout.IoLib;
+import net.robbytu.computercraft.lib.spout.MathLib;
 import net.robbytu.computercraft.lib.spout.OsLib;
+import net.robbytu.computercraft.lib.spout.RednetLib;
 import net.robbytu.computercraft.lib.spout.RedstoneLib;
 import net.robbytu.computercraft.lib.spout.StringLib;
+import net.robbytu.computercraft.lib.spout.TableLib;
 import net.robbytu.computercraft.lib.spout.TerminalLib;
 import net.robbytu.computercraft.listeners.ComputerBlockPlacementListener;
 import net.robbytu.computercraft.material.Materials;
@@ -91,10 +94,13 @@ public class CCMain extends JavaPlugin {
 		registerLib(IoLib.class);
 		registerLib(OsLib.class);
 		registerLib(StringLib.class);
+		registerLib(TableLib.class);
+		registerLib(MathLib.class);
 		registerLib(ColorLib.class);
 		registerLib(EventsLib.class);
 		registerLib(TerminalLib.class);
 		registerLib(RedstoneLib.class);
+		registerLib(RednetLib.class);
 		
 		// Register listeners
 		Bukkit.getPluginManager().registerEvents(new ComputerBlockPlacementListener(), this);
@@ -120,6 +126,25 @@ public class CCMain extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		Bukkit.getLogger().info("ComputerCraft for Spout is disabled.");
+	}
+	
+	public ComputerData findComputerData(String world, int x, int y, int z) {
+		ComputerData data = CCMain.instance.getDatabase().find(ComputerData.class)
+				.where()
+					.eq("x", x)
+					.eq("y", y)
+					.eq("z", z)
+					.eq("world", (String)world)
+				.findUnique();
+		return data;
+	}
+	
+	public ComputerThread getComputerAt(String world, int x, int y, int z) {
+		ComputerData data = findComputerData(world, x, y, z);
+		if (data == null)
+			return null;
+		
+		return ComputerThreads.get(data.getId());
 	}
 	
 	@Override

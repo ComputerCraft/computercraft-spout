@@ -34,8 +34,6 @@ public class RedstoneLib extends LuaLib {
 				return valueOf(isPowered(val.checkint()));
 			}
 		});
-
-		redstone.set("isPowered", redstone.get("getInput")); //deprecated, use rs.getInput
 		
 		env.set("rs", redstone);
 		return redstone;

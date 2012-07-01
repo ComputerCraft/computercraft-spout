@@ -14,13 +14,13 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaThread;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
+import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.VarArgFunction;
 
 import net.robbytu.computercraft.computer.ComputerThread;
 import net.robbytu.computercraft.computer.FileManager;
 import net.robbytu.computercraft.lib.LuaLib;
-import net.robbytu.computercraft.luaj.LuaInstance;
 
 public class BaseLib extends LuaLib {
 	private ComputerThread computer;
@@ -265,6 +265,20 @@ public class BaseLib extends LuaLib {
 			public Varargs invoke(Varargs args) {
 				return args.checktable(1).inext(args.arg(2));
 			}
+		});
+		
+		env.set("write", new OneArgFunction(env) {
+            public LuaValue call(LuaValue val) {
+            	BaseLib.this.computer.getGui().addEntry(val.toString());
+                return LuaValue.NIL;
+            }
+		});
+		
+		env.set("writeline", new OneArgFunction(env) {
+            public LuaValue call(LuaValue val) {
+            	BaseLib.this.computer.getGui().addEntry(val.toString());
+                return LuaValue.NIL;
+            }
 		});
 		
 		return null;

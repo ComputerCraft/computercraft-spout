@@ -26,6 +26,7 @@ import java.io.IOException;
 import net.robbytu.computercraft.computer.ComputerThread;
 import net.robbytu.computercraft.lib.LuaLib;
 
+import org.bukkit.Location;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -189,8 +190,8 @@ public class OsLib extends LuaLib {
 	}
 	
 	public String getComputerCoords() {
-		int[] pos = computer.getPosition();
-		String result = pos[0] + "," + pos[1] + "," + pos[2] + "," + computer.getWorld(); //TODO rewrite this to return VarArgs
+		Location pos = computer.getPosition();
+		String result = pos.getBlockX() + "," + pos.getBlockY() + "," + pos.getBlockZ() + "," + pos.getWorld(); //TODO rewrite this to return VarArgs
 		return result;
 	}
 	

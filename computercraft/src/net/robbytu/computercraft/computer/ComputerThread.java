@@ -1,35 +1,20 @@
 package net.robbytu.computercraft.computer;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 
-import org.bukkit.Bukkit;
-import org.getspout.spoutapi.block.SpoutBlock;
-import org.luaj.vm2.LuaError;
-import org.luaj.vm2.LuaTable;
-import org.luaj.vm2.LuaThread;
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.compiler.LuaC;
-import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.OneArgFunction;
-import org.luaj.vm2.lib.ZeroArgFunction;
-
 import net.robbytu.computercraft.CCMain;
-import net.robbytu.computercraft.computer.network.RednetHandler;
-import net.robbytu.computercraft.database.ComputerData;
 import net.robbytu.computercraft.gui.ComputerBlockGUI;
 import net.robbytu.computercraft.lib.LuaLib;
 import net.robbytu.computercraft.lib.spout.DeprecatedLib;
-import net.robbytu.computercraft.luaj.LuaInstance;
-import net.robbytu.computercraft.luaj.SpoutPlatform;
-import net.robbytu.computercraft.material.block.ComputerBlock;
-import net.robbytu.computercraft.util.BlockManager;
-import net.robbytu.computercraft.util.ScriptHelper;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.getspout.spoutapi.block.SpoutBlock;
+import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaThread;
+import org.luaj.vm2.compiler.LuaC;
 
 public class ComputerThread {
 	public Thread thread;
@@ -43,11 +28,8 @@ public class ComputerThread {
 	private SpoutBlock block;
 	
 	private boolean isWireless;
-	private String SSID;
 	
 	private LuaTable lua;
-	
-	private LuaInstance instance;
 	
 	public ComputerThread(final int id, ComputerBlockGUI gui, final SpoutBlock block, boolean isWireless) {
 		this.busy = false;
@@ -91,22 +73,24 @@ public class ComputerThread {
 		thread.start();
 	}
 	
-	public String connectedSSID() {
-		return SSID;
-	}
-	
 	public ComputerBlockGUI getGui() {
 		return gui;
 	}
 	
-	public LuaLib getLib(String name) {
+	@SuppressWarnings("unchecked")
+	public <T extends LuaLib> T getLib(String name) {
 		if (!librarys.containsKey(name)) return null;
-		return librarys.get(name);
+		LuaLib lib = librarys.get(name);
+		try {
+			return (T) lib;
+		}
+		catch (ClassCastException ex) {
+			return null;
+		}
 	}
 	
 	public LuaTable initLua(final int CID) {
 		final LuaTable lua = new LuaTable();
-		instance = LuaInstance.getActiveInstance();
 		
 		for (Class<? extends LuaLib> libClass : CCMain.instance.getLibrarys()) {
 			try {
@@ -131,92 +115,6 @@ public class ComputerThread {
 		
 		LuaThread.setGlobals(lua);
 		LuaC.install();
-		
-		// Default functions
-		
-		lua.set("write", new OneArgFunction() {
-            public LuaValue call(LuaValue val) {
-            	gui.addEntry(val.toString());
-
-                return LuaValue.NIL;
-            }
-		});
-		
-		lua.set("writeline", new OneArgFunction() {
-            public LuaValue call(LuaValue val) {
-            	gui.addEntry(val.toString());
-
-                return LuaValue.NIL;
-            }
-		});
-		
-		lua.set("run", new TwoArgFunction() {
-			public LuaValue call(LuaValue val, LuaValue val2) {
-				File scriptFile = FileManager.getFile(val.toString(), val2.toString(), CID);
-				
-				if (scriptFile != null) {
-					try {
-						final String script = ScriptHelper.getScript(scriptFile);
-						
-						addTask(new ComputerTask() {
-							@Override
-							public void execute(LuaTable lua, int ComputerID) {
-								try {
-									lua.get("loadstring").call(LuaValue.valueOf(script)).call();
-								}
-								catch(LuaError ex) {
-									lua.get("print").call(LuaValue.valueOf("\u00A7c" + ex.getMessage()));
-									lua.get("print").call(LuaValue.valueOf("\u00A77Script Failed."));
-								}
-							}
-						});
-						
-						addTask(ComputerBlock.getOSTask(CID)); //TODO bad place to do this, if the started script uses run(), the task queue is screwed up
-						
-						return LuaValue.TRUE;						
-					} catch (IOException e) {
-						lua.get("print").call(LuaValue.valueOf("\u00A77File unable to start!"));
-					}
-
-					return LuaValue.FALSE;
-				}
-				lua.get("print").call(LuaValue.valueOf("\u00A77File not found!"));
-				return LuaValue.FALSE;
-			}
-			
-		});
-		
-		// Network API - This is for both internal and world-wide networking
-		LuaTable rednet = new LuaTable();
-		rednet.set("send", new TwoArgFunction() {
-			public LuaValue call(LuaValue val1, LuaValue val2) {
-				if (isWireless) {
-					if (!SSID.isEmpty()) {
-						return LuaValue.valueOf(RednetHandler.send(val1.toint(), val2.toString(), SSID, CID));
-					}
-					return LuaValue.valueOf("RN_NO_CONNECTION");
-				}
-				return LuaValue.valueOf("RN_NO_WIRELESS");
-			}
-		});
-		
-		rednet.set("connect", new TwoArgFunction() {
-			public LuaValue call(LuaValue val1, LuaValue val2) {
-				if (isWireless) {
-					String ret = RednetHandler.connect(val1.toString(), val2.toString().trim(), CID);
-					
-					if (ret.equals("RN_CONNECTED")) {
-						SSID = val1.toString();
-					}
-					
-					return LuaValue.valueOf(ret);
-				}
-				return LuaValue.valueOf("RN_NO_WIRELESS");
-			}
-		});
-		
-		rednet.set("open", rednet.get("connect")); //deprecated, use rednet.connect
-		lua.set("rednet", rednet);
 		return lua;
 	}
 	
@@ -232,8 +130,8 @@ public class ComputerThread {
 		return isWireless;
 	}
 	
-	public int[] getPosition() {
-		return new int[] { block.getX(), block.getY(), block.getZ() };
+	public Location getPosition() {
+		return block.getLocation();
 	}
 	
 	public SpoutBlock getBlock() {

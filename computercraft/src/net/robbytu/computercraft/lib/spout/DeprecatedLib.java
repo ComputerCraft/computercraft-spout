@@ -1,7 +1,5 @@
 package net.robbytu.computercraft.lib.spout;
 
-import java.io.File;
-
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -29,17 +27,51 @@ public class DeprecatedLib extends LuaLib {
 	@Override
 	public LuaValue init(ComputerThread computer, LuaValue env) {
 		this.computer = computer;
+		initBase(env);
 		initFs(env, computer.getID());
 		initIo(env, computer.getID());
 		initOs(env);
 		initRedstone(env);
+		initRednet(env);
 		return env;
 	}
 	
+	private void initBase(LuaValue env) {
+		
+		env.set("run", new VarArgFunction() { // can be fully rewritten in lua
+			@Override
+			public Varargs invoke(Varargs args) {
+				final BaseLib base = computer.getLib("base");
+				final FileSystemLib fs = computer.getLib("fs");
+				if (base == null) error("base library not found");
+				if (fs == null) error("filesystem library not found");
+				String file = args.checkjstring(1);
+				if (args.isvalue(2)) {
+					file = fs.combine(file, args.tojstring(2));
+				}
+				
+				Varargs code = base.loadFile(file);
+				
+				if (code.isnil(1)) {
+					return varargsOf(LuaValue.FALSE, code.arg(2));
+				}
+				
+				return base.pcall((LuaValue)code, env, null);
+			}
+		});
+	}
+
+	private void initRednet(LuaValue env) {
+		if (!env.istable() || !env.get("rednet").istable()) return;
+		LuaTable rednet = env.get("rednet").checktable();
+		rednet.set("open", rednet.get("connect")); //deprecated, use rednet.connect
+	}
+
 	private void initRedstone(LuaValue env) {
 		if (!env.istable() || !env.get("rs").istable()) return;
 		LuaTable rs = env.get("rs").checktable();
 		env.set("redstone", rs); //deprecated, use rs		
+		rs.set("isPowered", rs.get("getInput")); //deprecated, use rs.getInput
 	}
 
 	private void initOs(LuaValue env) {

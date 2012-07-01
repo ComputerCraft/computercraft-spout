@@ -50,14 +50,15 @@ public class IoLib extends LuaLib {
 	}
 	
 	protected File openFile( String filename, boolean readMode, boolean appendMode, boolean updateMode, boolean binaryMode ) throws IOException {
-		RandomAccessFile f = new RandomAccessFile(filename,readMode? "r": "rw");
+		java.io.File file = FileManager.toRealPath(filename, computer.getID()); 
+		RandomAccessFile f = new RandomAccessFile(file,readMode? "r": "rw");
 		if ( appendMode ) {
 			f.seek(f.length());
 		} else {
 			if ( ! readMode )
 				f.setLength(0);
 		}
-		return new File(f, computer );
+		return new File(f, computer);
 	}
 	
 	protected File openProgram(String prog, String mode) throws IOException {
@@ -535,13 +536,14 @@ public class IoLib extends LuaLib {
 	}
 	
 	private File rawopenfile(String filename, String mode) throws IOException {
-		boolean isstdfile = "-".equals(filename);
+		//boolean isstdfile = "-".equals(filename);
 		boolean isreadmode = mode.startsWith("r");
+		/** stdfile TODO not supported yet
 		if ( isstdfile ) {
 			return isreadmode? 
 				wrapStdin():
 				wrapStdout();
-		}
+		}*/
 		boolean isappend = mode.startsWith("a");
 		boolean isupdate = mode.indexOf("+") > 0;
 		boolean isbinary = mode.endsWith("b");
