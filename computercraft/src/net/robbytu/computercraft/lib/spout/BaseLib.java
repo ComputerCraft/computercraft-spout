@@ -26,6 +26,7 @@ public class BaseLib extends LuaLib {
 	private ComputerThread computer;
 	private LuaValue next;
 	private LuaValue inext;
+	private boolean shutdown;
 	
 	public BaseLib() {
 		super("base");
@@ -312,6 +313,9 @@ public class BaseLib extends LuaLib {
 			}
 		} catch ( LuaError le ) {
 			String m = le.getMessage();
+			OsLib os = computer.getLib("os");
+			if (os != null && os.isShuttingDown()) 
+				throw new LuaError("Shutdown requested");
 			return LuaValue.varargsOf(LuaValue.FALSE, m!=null? LuaValue.valueOf(m) : LuaValue.NIL);
 		} catch ( Exception e ) {
 			String m = e.getMessage();

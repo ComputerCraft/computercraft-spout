@@ -47,6 +47,7 @@ public class OsLib extends LuaLib {
 	private static final long t0 = System.currentTimeMillis();
 	private static long tmpnames = t0;
 	private ComputerThread computer;
+	private boolean shuttingDown;
 
 	/** 
 	 * Create and OsLib instance.   
@@ -171,9 +172,9 @@ public class OsLib extends LuaLib {
 		os.set("shutdown", new ZeroArgFunction(env) {
 			public LuaValue call() {
 				// Do shutdown events, so that scripts might save configs for example
+				shuttingDown = true;
 				env.get("event").get("triggerEvent").call(LuaValue.valueOf("shutdown"), LuaValue.NIL);
-				
-				throw new LuaError("Shutdown requested"); // FIXME: better then Thread.interrupt, but only returns to last pcall.
+				throw new LuaError("Shutdown requested"); 
 			}
 		});
 		
@@ -187,6 +188,10 @@ public class OsLib extends LuaLib {
 
 	public boolean isWireless() {
 		return computer.isWireless();
+	}
+	
+	public boolean isShuttingDown() {
+		return shuttingDown;
 	}
 	
 	public String getComputerCoords() {

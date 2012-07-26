@@ -63,7 +63,7 @@ public class EventsLib extends LuaLib {
 		
 		events.set("triggerEvent", new TwoArgFunction(env) {
 			public LuaValue call(LuaValue eventId, LuaValue message) {
-				triggerEvent(eventId.checkjstring(), message.checkjstring());
+				triggerEvent(eventId.checkjstring(), message.optjstring(null));
 				return LuaValue.NIL;
 			}
 		});
@@ -76,9 +76,13 @@ public class EventsLib extends LuaLib {
 		if(!eventListeners.containsKey(eventId)) { // EventId isn't even registered, so there's nothing to be called
 			return;
 		}
+		LuaValue luaEventId = LuaValue.valueOf(eventId);
+		LuaValue luaMessage = LuaValue.NIL;
+		if (message != null)
+			luaMessage = LuaValue.valueOf(message);
 		
 		for(int i = 0; i < eventListeners.get(eventId).size(); i++) {
-			env.get(eventListeners.get(eventId).get(i)).call(LuaValue.valueOf(eventId), LuaValue.valueOf(message));
+			env.get(eventListeners.get(eventId).get(i)).call(luaEventId, luaMessage);
 		}
 	}
 
