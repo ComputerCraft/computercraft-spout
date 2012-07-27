@@ -30,6 +30,7 @@ import net.robbytu.computercraft.lib.spout.TerminalLib;
 import net.robbytu.computercraft.listeners.ComputerBlockPlacementListener;
 import net.robbytu.computercraft.material.Materials;
 import net.robbytu.computercraft.util.ConfigManager;
+import net.robbytu.computercraft.util.DefaultResources;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -56,27 +57,7 @@ public class CCMain extends JavaPlugin {
 		new File(getDataFolder().getAbsolutePath(), "computers" + File.separator).mkdir();
 		File romDir = new File(getDataFolder().getAbsolutePath(), "rom" + File.separator);
 		romDir.mkdir();
-		File defaultRom = new File(romDir, "boot.lua");
-		if (!defaultRom.exists()) {
-			try {
-				defaultRom.createNewFile();
-				OutputStream output = new FileOutputStream(defaultRom, false);
-		        InputStream input = CCMain.class.getResourceAsStream("/defaults/boot.lua");
-		        byte[] buf = new byte[8192];
-		        while (true) {
-		          int length = input.read(buf);
-		          getLogger().info("" + length);
-		          if (length < 0) {
-		            break;
-		          }
-		          output.write(buf, 0, length);
-		        }
-		        input.close();
-		        output.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		DefaultResources.extractDefaults(romDir.getAbsolutePath(), false);
 		
 		// Load configs
 		ConfigManager.loadConfig(getConfig());
