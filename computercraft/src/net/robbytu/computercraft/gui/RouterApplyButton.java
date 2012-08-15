@@ -1,10 +1,7 @@
 package net.robbytu.computercraft.gui;
 
-import net.robbytu.computercraft.material.Materials;
-
 import org.getspout.spoutapi.event.screen.ButtonClickEvent;
 import org.getspout.spoutapi.gui.GenericButton;
-import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 public class RouterApplyButton extends GenericButton {

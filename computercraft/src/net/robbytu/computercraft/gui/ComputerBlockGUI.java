@@ -3,7 +3,6 @@ package net.robbytu.computercraft.gui;
 import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.util.ConfigManager;
 
-import org.bukkit.Bukkit;
 import org.getspout.spoutapi.gui.GenericButton;
 import org.getspout.spoutapi.gui.GenericPopup;
 import org.getspout.spoutapi.gui.GenericTextField;

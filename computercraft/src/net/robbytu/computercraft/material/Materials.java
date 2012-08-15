@@ -14,43 +14,30 @@ import net.robbytu.computercraft.material.item.WirelessAdapterItem;
 import net.robbytu.computercraft.material.item.WirelessAntennaItem;
 
 public class Materials {
-	public static ComputerBlock ComputerBlockSouth;
-	public static ComputerBlock ComputerBlockNorth;
-	public static ComputerBlock ComputerBlockEast;
-	public static ComputerBlock ComputerBlockWest;
-	
-	public static WirelessComputerBlock WirelessComputerBlockSouth;
-	public static WirelessComputerBlock WirelessComputerBlockNorth;
-	public static WirelessComputerBlock WirelessComputerBlockEast;
-	public static WirelessComputerBlock WirelessComputerBlockWest;
+	public static ComputerBlock ComputerBlock;	
+	public static WirelessComputerBlock WirelessComputerBlock;
 	
 	public static WirelessAdapterItem WirelessAdapterItem;
 	public static WirelessAntennaItem WirelessAntennaItem;
 	
-	public static RouterBlock RouterBlockGeneral;
+	public static RouterBlock RouterBlock;
 	
 	public Materials() {
-		ComputerBlockEast = new ComputerBlock(CCMain.instance, "ComputerBlockEast", false, 2);
-		ComputerBlockSouth = new ComputerBlock(CCMain.instance, "ComputerBlockSouth", false, 0);
-		ComputerBlockNorth = new ComputerBlock(CCMain.instance, "ComputerBlockNorth", false, 1);
-		ComputerBlockWest = new ComputerBlock(CCMain.instance, "ComputerBlockWest", false, 3);
+		ComputerBlock = new ComputerBlock(CCMain.instance, "ComputerBlock", false);
 		
-		WirelessComputerBlockEast = new WirelessComputerBlock(CCMain.instance, "WirelessComputerBlockEast", false, 2);
-		WirelessComputerBlockSouth = new WirelessComputerBlock(CCMain.instance, "WirelessComputerBlockSouth", false, 0);
-		WirelessComputerBlockNorth = new WirelessComputerBlock(CCMain.instance, "WirelessComputerBlockNorth", false, 1);
-		WirelessComputerBlockWest = new WirelessComputerBlock(CCMain.instance, "WirelessComputerBlockWest", false, 3);
+		WirelessComputerBlock = new WirelessComputerBlock(CCMain.instance, "WirelessComputerBlock", false, 2);
 		
 		WirelessAdapterItem = new WirelessAdapterItem(CCMain.instance);
 		WirelessAntennaItem = new WirelessAntennaItem(CCMain.instance);
 		
-		RouterBlockGeneral = new RouterBlock();
+		RouterBlock = new RouterBlock();
 		
 		registerRecipes();
 	}
 	
 	public void registerRecipes() {
 		// Computer Block
-		SpoutItemStack ComputerBlockRecipeResult = new SpoutItemStack(ComputerBlockEast);
+		SpoutItemStack ComputerBlockRecipeResult = new SpoutItemStack(ComputerBlock);
 		SpoutShapedRecipe ComputerBlockRecipe = new SpoutShapedRecipe(ComputerBlockRecipeResult);
 		
 		ComputerBlockRecipe.shape("AAA", "ABA", "ACA");
@@ -83,16 +70,16 @@ public class Materials {
 		SpoutManager.getMaterialManager().registerSpoutRecipe(WirelessAdapterRecipe);
 		
 		// Wireless Computer Block		
-		SpoutItemStack WirelessComputerBlockRecipeResult = new SpoutItemStack(WirelessComputerBlockEast);
+		SpoutItemStack WirelessComputerBlockRecipeResult = new SpoutItemStack(WirelessComputerBlock);
 		SpoutShapelessRecipe WirelessComputerBlockRecipe = new SpoutShapelessRecipe(WirelessComputerBlockRecipeResult);
 		
-		WirelessComputerBlockRecipe.addIngredient(1, ComputerBlockEast);
+		WirelessComputerBlockRecipe.addIngredient(1, ComputerBlock);
 		WirelessComputerBlockRecipe.addIngredient(1, WirelessAdapterItem);
 		
 		SpoutManager.getMaterialManager().registerSpoutRecipe(WirelessComputerBlockRecipe);
 
 		// Router Block
-		SpoutItemStack RouterBlockRecipeResult = new SpoutItemStack(RouterBlockGeneral);
+		SpoutItemStack RouterBlockRecipeResult = new SpoutItemStack(RouterBlock);
 		SpoutShapedRecipe RouterBlockRecipe = new SpoutShapedRecipe(RouterBlockRecipeResult);
 		
 		RouterBlockRecipe.shape("ABA", "ABA", "AAA");

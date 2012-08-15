@@ -2,10 +2,6 @@
 package net.robbytu.computercraft;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,7 +23,6 @@ import net.robbytu.computercraft.lib.spout.RedstoneLib;
 import net.robbytu.computercraft.lib.spout.StringLib;
 import net.robbytu.computercraft.lib.spout.TableLib;
 import net.robbytu.computercraft.lib.spout.TerminalLib;
-import net.robbytu.computercraft.listeners.ComputerBlockPlacementListener;
 import net.robbytu.computercraft.material.Materials;
 import net.robbytu.computercraft.util.ConfigManager;
 import net.robbytu.computercraft.util.DefaultResources;
@@ -85,7 +80,7 @@ public class CCMain extends JavaPlugin {
 		registerLib(RednetLib.class);
 		
 		// Register listeners
-		Bukkit.getPluginManager().registerEvents(new ComputerBlockPlacementListener(), this);
+		// Bukkit.getPluginManager().registerEvents(new ComputerBlockPlacementListener(), this);
 		
 		// Database stuff
 		try {
