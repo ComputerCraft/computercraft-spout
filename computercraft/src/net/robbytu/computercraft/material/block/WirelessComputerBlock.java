@@ -1,57 +1,29 @@
 package net.robbytu.computercraft.material.block;
 
-import net.robbytu.computercraft.CCMain;
-import net.robbytu.computercraft.material.Materials;
 import net.robbytu.computercraft.util.ConfigManager;
 
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
+import org.getspout.spoutapi.block.design.BlockDesign;
 import org.getspout.spoutapi.block.design.GenericCubeBlockDesign;
 import org.getspout.spoutapi.block.design.Texture;
-import org.getspout.spoutapi.inventory.SpoutItemStack;
 
 public class WirelessComputerBlock extends BaseComputerBlock {
 
 	public WirelessComputerBlock(Plugin plugin, String name, boolean isOpaque, int face) {
-		super(plugin, name, ConfigManager.graphicsBasepath + "computerblock.png", isOpaque, face);
-		this.setName("Computer with Wireless Network Card");
-		
-		if (!name.equals("WirelessComputerBlockEast"))
-			setItemDrop(new SpoutItemStack(Materials.WirelessComputerBlockEast, 1));
-		
-		setupDesign(plugin, face, ConfigManager.graphicsBasepath + "computerblock.png");
+		super(plugin, name, isOpaque, setupDesign(plugin, ConfigManager.graphicsBasepath + "computerblock.png"), true);
+		this.setName("Computer with Wireless Network Card");		
 	}
 	
-	@Override
-	protected void setupDesign(Plugin plugin, int face, String texture) {
+	protected static BlockDesign setupDesign(Plugin plugin, String texture) {
 		GenericCubeBlockDesign BlockDesign;
 		
-		if(face == 0) {
-			BlockDesign = new GenericCubeBlockDesign(
-					plugin,
-					new Texture(plugin, texture, 256, 256, 16),
-					new int[] { 2, 3, 3, 0, 3, 2 });
-		}
-		else if(face == 1) {
-			BlockDesign = new GenericCubeBlockDesign(
-					plugin,
-					new Texture(plugin, texture, 256, 256, 16),
-					new int[] { 2, 0, 3, 3, 3, 2 });
-		}
-		else if(face == 3) {
-			BlockDesign = new GenericCubeBlockDesign(
-					plugin,
-					new Texture(plugin, texture, 256, 256, 16),
-					new int[] { 2, 3, 3, 3, 0, 2 });
-		}
-		else {
-			BlockDesign = new GenericCubeBlockDesign(
-					plugin,
-					new Texture(plugin, texture, 256, 256, 16),
-					new int[] { 2, 3, 0, 3, 3, 2 });
-		}
+		BlockDesign = new GenericCubeBlockDesign(
+				plugin,
+				new Texture(plugin, texture, 256, 256, 16),
+				new int[] { 2, 3, 3, 0, 3, 2 });
 		
-		this.setBlockDesign(BlockDesign);
+		return BlockDesign;
 	}
 	
 	@Override

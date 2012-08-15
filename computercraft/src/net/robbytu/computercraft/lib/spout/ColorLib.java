@@ -45,7 +45,7 @@ public class ColorLib extends LuaLib {
 		color.set("DARKRED", DARKRED);
 		color.set("DARKPURPLE", DARKPRUPLE);
 		color.set("GOLD", GOLD);
-		color.set("GREY", GRAY);
+		color.set("GRAY", GRAY);
 		color.set("DARKGREY", DARKGREY);
 		color.set("BLUE", BLUE);
 		color.set("GREEN", GREEN);

@@ -1,6 +1,5 @@
 package net.robbytu.computercraft.material.item;
 
-import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.util.ConfigManager;
 
 import org.bukkit.plugin.Plugin;

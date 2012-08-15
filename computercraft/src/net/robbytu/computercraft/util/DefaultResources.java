@@ -105,7 +105,7 @@ public class DefaultResources {
 				path = path.substring(0, path.lastIndexOf("!/"));
 				jarFile = new File(new URI(path));
 			}
-			Bukkit.getLogger().warning("try to load resources from: " + path);
+
 			return new JarFile(jarFile);
 		} catch (URISyntaxException e) {
 			return null;

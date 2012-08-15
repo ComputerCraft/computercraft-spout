@@ -10,7 +10,7 @@ _exit_shell = false
 cd = function(dir)
    	_newdir = fs.getDir(fs.combine(_curdir, dir))
 	if _newdir == "" then
-   		print(color.byString("RED") .. "No such directory")
+   		print(color.RED .. "No such directory")
 	else
 		_curdir = _newdir
 		pwd()
@@ -21,7 +21,7 @@ lls = function()
 	if fs.isDir(_curdir) then
 		fs.printList(_curdir)
 	else
-		print(color.byString("RED") .. "Current working directory does not exist!")		
+		print(color.RED .. "Current working directory does not exist!")		
 	end
 end
 
@@ -29,16 +29,16 @@ rm = function(filename)
 	if fs.isDir(_curdir) then
 		result = fs.delete(fs.combine(_curdir, filename))
 		if result == "RM_FILE_OK" then
-			print(color.byString("GREEN") .. "File got deleted.")
+			print(color.GREEN .. "File got deleted.")
 		elseif result == "RM_DIR_OK" then
-			print(color.byString("GREEN") .. "Directory got deleted.")
+			print(color.GREEN .. "Directory got deleted.")
 		elseif result == "RM_DOES_NOT_EXIST" then
-			print(color.byString("RED") .. "No such file or directory.")
+			print(color.RED .. "No such file or directory.")
 		else
-			print(color.byString("RED") .. "Something strange is goin' on...")
+			print(color.RED .. "Something strange is goin' on...")
 		end
 	else
-		print(color.byString("RED") .. "Current working directory does not exist!")
+		print(color.RED .. "Current working directory does not exist!")
 	end
 end
 
@@ -53,18 +53,18 @@ wlc = function()
 	RET = rednet.open(SSID, PWD)
 
 	if RET == "RN_CONNECTED" then
-		print(color.byString("GREEN") .. "Now connected to " .. SSID)
+		print(color.GREEN .. "Now connected to " .. SSID)
 	else
-		print(color.byString("RED") .. "Failed to connect with error " .. RET)
+		print(color.RED .. "Failed to connect with error " .. RET)
 	end
 end
 
 pwd = function()
-	print(color.byString("GRAY") .. "Working directory: " .. _curdir)
+	print(color.GRAY .. "Working directory: " .. _curdir)
 end
 
 motd = function()
-	print(color.byString("AQUA") .. " ** " .. _motd)
+	print(color.AQUA .. " ** " .. _motd)
 end
 
 shell = function()
@@ -85,9 +85,9 @@ shell = function()
 		luaConsole()
 	elseif string.sub(input, 0, 6) == "MKDIR " then
 		if fs.makeDir(fs.combine(_curdir, string.sub(input, 7))) then
-			print(color.byString("GREEN") .. "Directory was created!")
+			print(color.GREEN .. "Directory was created!")
 		else
-			print(color.byString("RED") .. "Something went wrong!")
+			print(color.RED .. "Something went wrong!")
 		end
 	elseif string.sub(input, 0, 4) == "RUN " then
 		result, errmsg = run(fs.combine(_curdir, string.sub(input, 5)))
@@ -96,22 +96,22 @@ shell = function()
 		end 
 	elseif string.sub(input, 0, 7) == "MKFILE " then
 		if io.mkFile(_curdir, string.sub(input, 8)) then
-			print(color.byString("GREEN") .. "File was created!")
+			print(color.GREEN .. "File was created!")
 		else
-			print(color.byString("RED") .. "Something went wrong!")
+			print(color.RED .. "Something went wrong!")
 		end
 	elseif string.sub(input, 0, 9) == "VIEWFILE " then
 		_fileContents = io.getFile(_curdir, string.sub(input, 10))
 
 		if _fileContents == nil then
-			print(color.byString("RED") .. "Something went wrong!")
+			print(color.RED .. "Something went wrong!")
 		else
 			print(_fileContents)
 		end
 	elseif string.sub(input, 0, 7) == "CONNECT" then
 		wlc()
 	else
-		print(color.byString("RED") .. "Command not found.")
+		print(color.RED .. "Command not found.")
 	end
 
 	if _exit_shell == false then
@@ -120,16 +120,16 @@ shell = function()
 end
 
 luaConsole = function()
-	term.setInputTip("Type a command or " .. color.byString("GRAY") .. "exit")
+	term.setInputTip("Type a command or " .. color.GRAY .. "exit")
 
-	print(color.byString("WHITE") .. " ** Welcome to the LUA console.")
-	print(color.byString("WHITE") .. " ** Type a command or " .. color.byString("GRAY") .. "exit" .. color.byString("WHITE") .. " to leave.")
+	print(color.WHITE .. " ** Welcome to the LUA console.")
+	print(color.WHITE .. " ** Type a command or " .. color.GRAY .. "exit" .. color.WHITE .. " to leave.")
 
 	con = true
 	while con do
 		input = term.getInput()
 		if input == "exit" then
-			print(color.byString("WHITE") .. " ** Lua console exiting...")
+			print(color.WHITE .. " ** Lua console exiting...")
 			con = false
 		else
 			new_input = ""
@@ -146,7 +146,7 @@ luaConsole = function()
 end
 
 eh = function(s)
-	print(color.byString("RED") .. "An error occured!")
+	print(color.RED .. "An error occured!")
 	print(s)
 end
 

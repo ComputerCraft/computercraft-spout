@@ -17,6 +17,7 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.block.SpoutBlock;
+import org.getspout.spoutapi.block.design.BlockDesign;
 import org.getspout.spoutapi.material.block.GenericCustomBlock;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.luaj.vm2.LuaError;
@@ -25,13 +26,11 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
 public abstract class BaseComputerBlock  extends GenericCustomBlock {	
-	public BaseComputerBlock(Plugin plugin, String name, String textureURL, boolean isOpaque, int face) {
-		super(plugin, name, isOpaque);
+	public BaseComputerBlock(Plugin plugin, String name, boolean isOpaque, BlockDesign design, boolean rotate) {
+		super(plugin, name, isOpaque, design, rotate);
 		
-		setupDesign(plugin, face, textureURL);
+		//setupDesign(textureURL);
 	}
-	
-	protected abstract void setupDesign(Plugin plugin, int face, String texture);
 	
 	@Override
 	public void onBlockDestroyed(World world, int x, int y, int z) {
