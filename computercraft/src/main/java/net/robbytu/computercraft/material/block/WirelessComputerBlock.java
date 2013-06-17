@@ -10,7 +10,7 @@ import org.getspout.spoutapi.block.design.Texture;
 
 public class WirelessComputerBlock extends BaseComputerBlock {
 
-	public WirelessComputerBlock(Plugin plugin, String name, boolean isOpaque, int face) {
+	public WirelessComputerBlock(Plugin plugin, String name, boolean isOpaque) {
 		super(plugin, name, isOpaque, setupDesign(plugin, ConfigManager.graphicsBasepath + "computerblock.png"), true);
 		this.setName("Computer with Wireless Network Card");		
 	}

@@ -1,6 +1,7 @@
 package net.robbytu.computercraft.material;
 
 import org.getspout.spoutapi.SpoutManager;
+import org.getspout.spoutapi.block.design.Texture;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.inventory.SpoutShapedRecipe;
 import org.getspout.spoutapi.inventory.SpoutShapelessRecipe;
@@ -8,10 +9,13 @@ import org.getspout.spoutapi.material.MaterialData;
 
 import net.robbytu.computercraft.CCMain;
 import net.robbytu.computercraft.material.block.ComputerBlock;
+import net.robbytu.computercraft.material.block.UnpoweredInputOutputBlock;
+import net.robbytu.computercraft.material.block.PoweredInputOutputBlock;
 import net.robbytu.computercraft.material.block.RouterBlock;
 import net.robbytu.computercraft.material.block.WirelessComputerBlock;
 import net.robbytu.computercraft.material.item.WirelessAdapterItem;
 import net.robbytu.computercraft.material.item.WirelessAntennaItem;
+import net.robbytu.computercraft.util.ConfigManager;
 
 public class Materials {
 	public static ComputerBlock ComputerBlock;	
@@ -21,11 +25,17 @@ public class Materials {
 	public static WirelessAntennaItem WirelessAntennaItem;
 	
 	public static RouterBlock RouterBlock;
+	public static UnpoweredInputOutputBlock UnpoweredIOBlock;
+	public static PoweredInputOutputBlock PoweredIOBlock;
+	public static Texture ComputerCraftTexture;
 	
 	public Materials() {
-		ComputerBlock = new ComputerBlock(CCMain.instance, "ComputerBlock", false);
+		ComputerCraftTexture = new Texture(CCMain.instance, ConfigManager.graphicsBasepath + "computerblock.png", 256, 256, 16);
+		ComputerBlock = new ComputerBlock(CCMain.instance, "ComputerBlock", true);
 		
-		WirelessComputerBlock = new WirelessComputerBlock(CCMain.instance, "WirelessComputerBlock", false, 2);
+		WirelessComputerBlock = new WirelessComputerBlock(CCMain.instance, "WirelessComputerBlock", true);
+		UnpoweredIOBlock = new UnpoweredInputOutputBlock(CCMain.instance, "InputOutputBlock", true);
+		PoweredIOBlock = new PoweredInputOutputBlock(CCMain.instance, "PoweredInputOutputBlock", true);
 		
 		WirelessAdapterItem = new WirelessAdapterItem(CCMain.instance);
 		WirelessAntennaItem = new WirelessAntennaItem(CCMain.instance);
