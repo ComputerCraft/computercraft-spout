@@ -57,13 +57,11 @@
 			<groupId>org.getspout</groupId>
 			<artifactId>spoutplugin</artifactId>
 			<version>1.5.2-R0.2-SNAPSHOT</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>1.5.2-R1.0</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
