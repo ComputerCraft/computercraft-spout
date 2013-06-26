@@ -24,6 +24,7 @@ import net.robbytu.computercraft.lib.spout.StringLib;
 import net.robbytu.computercraft.lib.spout.TableLib;
 import net.robbytu.computercraft.lib.spout.TerminalLib;
 import net.robbytu.computercraft.listener.ComputerBlockPlacementListener;
+import net.robbytu.computercraft.listener.ComputerGuiListener;
 import net.robbytu.computercraft.material.Materials;
 import net.robbytu.computercraft.util.ConfigManager;
 import net.robbytu.computercraft.util.DefaultResources;
@@ -82,6 +83,7 @@ public class CCMain extends JavaPlugin {
 		
 		// Register listeners
 		Bukkit.getPluginManager().registerEvents(new ComputerBlockPlacementListener(), this);
+		Bukkit.getPluginManager().registerEvents(new ComputerGuiListener(), this);
 		
 		// Database stuff
 		try {

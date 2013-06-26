@@ -10,13 +10,14 @@ import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
-public class ComputerBlockGUI {
+public class ComputerBlockGUI extends GenericPopup {
 	private GenericTextField output;
 	private GenericTexture bg;
 	private GenericButton sendButton;
 	public GenericTextField input;
 	public String inputBuffer;
 	public boolean buttonClicked;
+	public boolean waitForText;
 	
 	public ComputerBlockGUI(int computerID) {
 		this.inputBuffer = "";
@@ -47,6 +48,7 @@ public class ComputerBlockGUI {
 		this.sendButton.setX(52+285).setY(195); // Sorry, really bad at math.. :$
 		this.sendButton.setText("OK");
 		this.sendButton.setPriority(RenderPriority.Lowest);
+		attachWidgets(CCMain.instance, this.bg, this.output, this.input, this.sendButton);
 	}
 	
 	public void addEntry(String text) {
@@ -76,6 +78,7 @@ public class ComputerBlockGUI {
 					if (lastColorIndex > -1) {
 						lastColor = tempText.substring(lastColorIndex, lastColorIndex + 2);
 					}
+
 					newOutput1 += tempText.substring(0, maxOutputLength) + "\n" + lastColor;
 					tempText = tempText.substring(maxOutputLength);
 				}
@@ -100,16 +103,12 @@ public class ComputerBlockGUI {
 			newOutput2 = newOutput1;
 		
 		// End of shitty work-around :)
-		
 		this.output.setText(newOutput2);
-		
 		this.output.setDirty(true);
 	}
 	
 	public void attachToScreen(SpoutPlayer player) {
-		GenericPopup popup = new GenericPopup();
-		player.getMainScreen().attachPopupScreen(popup);
-		popup.attachWidgets(CCMain.instance, this.bg, this.output, this.input, this.sendButton);
+		player.getMainScreen().attachPopupScreen(this);
 	}
 	
 	public void clearConsole() {
@@ -117,8 +116,12 @@ public class ComputerBlockGUI {
 	}
 	
 	public void sendInputToScript() {
-		this.buttonClicked = true;
-		this.inputBuffer = this.input.getText();
+		sendInputToScript(this.input.getText());
 		this.input.setText("");
+	}
+	
+	public void sendInputToScript(String input) {
+		this.buttonClicked = true;
+		this.inputBuffer = input;
 	}
 }
